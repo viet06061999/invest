@@ -4,6 +4,7 @@ import dev.sabri.securityjwt.controller.dto.AuthenticationRequest;
 import dev.sabri.securityjwt.controller.dto.AuthenticationResponse;
 import dev.sabri.securityjwt.controller.dto.RegisterRequest;
 import dev.sabri.securityjwt.exception.BusinessException;
+import dev.sabri.securityjwt.mapper.Entity2AcountResponse;
 import dev.sabri.securityjwt.repo.UserRepository;
 import dev.sabri.securityjwt.model.user.Role;
 import dev.sabri.securityjwt.model.user.User;
@@ -27,9 +28,9 @@ public record AuthenticationService(UserRepository userRepository,
                 passwordEncoder.encode(request.password()),
                 Role.USER);
         try {
-            userRepository.save(user);
+            var userResult = userRepository.save(user);
             final var token = JwtService.generateToken(user);
-            return new AuthenticationResponse(token);
+            return new AuthenticationResponse(token, Entity2AcountResponse.INSTANCE.map(userResult));
         }catch (DataIntegrityViolationException e){
             throw new BusinessException(4011, "Account was exists!", 500);
         }
@@ -45,7 +46,7 @@ public record AuthenticationService(UserRepository userRepository,
         );
         final var user = userRepository.findByEmail(request.email()).orElseThrow();
         final var token = JwtService.generateToken(user);
-        return new AuthenticationResponse(token);
+        return new AuthenticationResponse(token, Entity2AcountResponse.INSTANCE.map(user));
 
     }
 }

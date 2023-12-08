@@ -1,4 +1,4 @@
 package dev.sabri.securityjwt.controller.dto;
 
-public record AuthenticationResponse(String token) {
+public record AuthenticationResponse(String token, UserResponse user) {
 }
