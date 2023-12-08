@@ -1,0 +1,59 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -----------------------< dev.sabri:security-jwt >-----------------------
+[INFO] Building security-jwt 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> spring-boot:3.0.2:run (default-cli) > test-compile @ security-jwt >>>
+[INFO] 
+[INFO] --- resources:3.3.0:resources (default-resources) @ security-jwt ---
+[INFO] Copying 1 resource
+[INFO] Copying 0 resource
+[INFO] 
+[INFO] --- compiler:3.10.1:compile (default-compile) @ security-jwt ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- resources:3.3.0:testResources (default-testResources) @ security-jwt ---
+[INFO] skip non existing resourceDirectory /Users/hungld/Documents/project/security-jwt-main/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.10.1:testCompile (default-testCompile) @ security-jwt ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] <<< spring-boot:3.0.2:run (default-cli) < test-compile @ security-jwt <<<
+[INFO] 
+[INFO] 
+[INFO] --- spring-boot:3.0.2:run (default-cli) @ security-jwt ---
+[INFO] Attaching agents: []
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.0.2)
+
+2023-12-08T14:42:31.728+07:00  INFO 58471 --- [           main] d.s.securityjwt.SecurityJwtApplication   : Starting SecurityJwtApplication using Java 17.0.9 with PID 58471 (/Users/hungld/Documents/project/security-jwt-main/target/classes started by hungld in /Users/hungld/Documents/project/security-jwt-main)
+2023-12-08T14:42:31.729+07:00  INFO 58471 --- [           main] d.s.securityjwt.SecurityJwtApplication   : No active profile set, falling back to 1 default profile: "default"
+2023-12-08T14:42:31.991+07:00  INFO 58471 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2023-12-08T14:42:32.010+07:00  INFO 58471 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 17 ms. Found 1 JPA repository interfaces.
+2023-12-08T14:42:32.187+07:00  INFO 58471 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8089 (http)
+2023-12-08T14:42:32.191+07:00  INFO 58471 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2023-12-08T14:42:32.191+07:00  INFO 58471 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.5]
+2023-12-08T14:42:32.248+07:00  INFO 58471 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2023-12-08T14:42:32.249+07:00  INFO 58471 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 506 ms
+2023-12-08T14:42:32.338+07:00  INFO 58471 --- [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2023-12-08T14:42:32.364+07:00  INFO 58471 --- [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.1.6.Final
+2023-12-08T14:42:32.422+07:00  WARN 58471 --- [           main] org.hibernate.orm.deprecation            : HHH90000021: Encountered deprecated setting [javax.persistence.sharedCache.mode], use [jakarta.persistence.sharedCache.mode] instead
+2023-12-08T14:42:32.462+07:00  INFO 58471 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2023-12-08T14:42:32.510+07:00  INFO 58471 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@6ef037e4
+2023-12-08T14:42:32.510+07:00  INFO 58471 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2023-12-08T14:42:32.555+07:00  INFO 58471 --- [           main] SQL dialect                              : HHH000400: Using dialect: org.hibernate.dialect.PostgreSQLDialect
+2023-12-08T14:42:32.872+07:00  INFO 58471 --- [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2023-12-08T14:42:32.875+07:00  INFO 58471 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2023-12-08T14:42:33.028+07:00  WARN 58471 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2023-12-08T14:42:33.056+07:00  INFO 58471 --- [           main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@60251ddb, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@2059c3ff, org.springframework.security.web.context.SecurityContextHolderFilter@be9cc86, org.springframework.security.web.header.HeaderWriterFilter@43120a77, org.springframework.security.web.authentication.logout.LogoutFilter@37d3e740, dev.sabri.securityjwt.config.JwtAuthenticationFilter@2f8ab988, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@8dc3019, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@c79915a, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@46c475ba, org.springframework.security.web.session.SessionManagementFilter@4e35a219, org.springframework.security.web.access.ExceptionTranslationFilter@656672fb, org.springframework.security.web.access.intercept.AuthorizationFilter@304e1e4e]
+2023-12-08T14:42:33.178+07:00  INFO 58471 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint(s) beneath base path '/actuator'
+2023-12-08T14:42:33.205+07:00  INFO 58471 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8089 (http) with context path ''
+2023-12-08T14:42:33.212+07:00  INFO 58471 --- [           main] d.s.securityjwt.SecurityJwtApplication   : Started SecurityJwtApplication in 1.613 seconds (process running for 1.725)
