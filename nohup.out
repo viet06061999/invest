@@ -153,3 +153,8 @@ Identify and stop the process that's listening on port 8088 or configure this ap
 [ERROR] 
 [ERROR] For more information about the errors and possible solutions, please read the following articles:
 [ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException
+2023-12-08T18:04:59.569+07:00  WARN 58471 --- [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=17m55s500ms).
+2023-12-08T18:34:14.047+07:00  WARN 58471 --- [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=29m14s479ms).
+2023-12-08T18:50:09.025+07:00  WARN 58471 --- [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=15m54s979ms).
+2023-12-08T19:17:37.375+07:00  WARN 58471 --- [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=27m28s350ms).
+2023-12-08T19:45:32.031+07:00  WARN 58471 --- [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=27m54s656ms).

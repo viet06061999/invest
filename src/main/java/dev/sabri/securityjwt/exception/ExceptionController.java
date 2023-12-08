@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -23,11 +24,23 @@ public class ExceptionController {
 
     @ExceptionHandler(BusinessException.class)
     protected void handleBusinessException(BusinessException e, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setStatus(e.httpStatus);
+        handError(e.code,e.httpStatus, e.message, response);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    protected void handleException(AccessDeniedException e, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        handError(4003,403, "No permission!", response);
+    }
+
+    @ExceptionHandler(Exception.class)
+    protected void handleBusinessException(Exception e, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        handError(5000,500, "Some thing went wrong!", response);
+    }
+    private void handError(int code, int status, String message, HttpServletResponse response) throws IOException {
+        response.setStatus(status);
         response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-        var errorRes = Response.ofFailed(e.code, e.message);
+        var errorRes = Response.ofFailed(code, message);
         byte[] body = objectMapper.writeValueAsBytes(errorRes);
-        log.error(e);
         response.setContentLength(body.length);
         response.getOutputStream().write(body);
     }

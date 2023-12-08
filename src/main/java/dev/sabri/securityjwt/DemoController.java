@@ -1,6 +1,7 @@
 package dev.sabri.securityjwt;
 
 import dev.sabri.securityjwt.model.user.User;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,10 +11,10 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/demo")
-public record DemoController() {
-
+public class DemoController {
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public String sayHello(Authentication authentication) {
         return """
                 Hello %s 🥳 !
