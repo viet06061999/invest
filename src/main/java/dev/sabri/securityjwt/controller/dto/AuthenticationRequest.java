@@ -1,4 +1,4 @@
 package dev.sabri.securityjwt.controller.dto;
 
-public record AuthenticationRequest(String email, String password) {
+public record AuthenticationRequest(String phone, String password) {
 }

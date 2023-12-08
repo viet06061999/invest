@@ -2,9 +2,13 @@ package dev.sabri.securityjwt.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import lombok.Data;
 import org.springframework.data.domain.Page;
+import org.springframework.validation.FieldError;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Response<T> {
@@ -42,6 +46,16 @@ public class Response<T> {
     }
 
 
+    public static Response<Void> ofFailed(int errorCode, String message, List<FieldError> fieldErrors) {
+        Response response = new Response<>();
+        response.meta.code = errorCode;
+        response.meta.message = message;
+        response.meta.fieldErrors = fieldErrors.stream()
+                .map(FieldError::getDefaultMessage)
+                .toList();
+        return response;
+    }
+
     public static Response<Void> ofFailed(int errorCode, String message) {
         Response response = new Response<>();
         response.meta.code = errorCode;
@@ -58,6 +72,7 @@ public class Response<T> {
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    @Data
     public static class Metadata {
         public static final int OK_CODE = 200;
         int code;
@@ -66,36 +81,20 @@ public class Response<T> {
         Long total;
         String message;
 
+        List<String> fieldErrors;
+
         public Metadata() {
         }
 
-        public Metadata(int code, Integer page, Integer size, Long total, String message) {
+        public Metadata(int code, Integer page, Integer size, Long total, String message, List<FieldError> fieldErrors) {
             this.code = code;
             this.page = page;
             this.size = size;
             this.total = total;
             this.message = message;
+            this.fieldErrors = fieldErrors.stream()
+                    .map(FieldError::getDefaultMessage)
+                    .toList();
         }
-
-        public int getCode() {
-            return code;
-        }
-
-        public Integer getPage() {
-            return page;
-        }
-
-        public Integer getSize() {
-            return size;
-        }
-
-        public Long getTotal() {
-            return total;
-        }
-
-        public String getMessage() {
-            return message;
-        }
-
     }
 }

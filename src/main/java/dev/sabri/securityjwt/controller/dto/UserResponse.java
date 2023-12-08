@@ -12,6 +12,9 @@ public class UserResponse  {
     private Integer id;
     private String firstname;
     private String lastname;
-    private String email;
+    private String phone;
+    private String code;
+    private String refId;
+    private int point;
     Role role;
 }

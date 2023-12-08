@@ -13,7 +13,9 @@ dev/sabri/securityjwt/mapper/Entity2AcountResponse.class
 dev/sabri/securityjwt/utils/JwtService.class
 dev/sabri/securityjwt/controller/AuthController.class
 dev/sabri/securityjwt/SecurityJwtApplication.class
+dev/sabri/securityjwt/utils/ReferralCodeGenerator.class
 dev/sabri/securityjwt/config/SecurityConfiguration.class
+dev/sabri/securityjwt/config/DefaultRolesPrefixPostProcessor.class
 dev/sabri/securityjwt/model/user/Role.class
 dev/sabri/securityjwt/model/Response$Metadata.class
 dev/sabri/securityjwt/repo/UserRepository.class

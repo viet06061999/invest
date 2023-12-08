@@ -26,7 +26,7 @@ public class DemoController {
         return Optional.of(authentication)
                 .filter(User.class::isInstance)
                 .map(User.class::cast)
-                .map(User::getEmail)
+                .map(User::getPhone)
                 .orElseGet(authentication::getName);
     }
 

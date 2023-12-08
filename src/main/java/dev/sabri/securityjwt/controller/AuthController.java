@@ -5,6 +5,7 @@ import dev.sabri.securityjwt.controller.dto.AuthenticationResponse;
 import dev.sabri.securityjwt.controller.dto.RegisterRequest;
 import dev.sabri.securityjwt.model.Response;
 import dev.sabri.securityjwt.service.AuthenticationService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,7 +18,7 @@ public record AuthController(AuthenticationService authenticationService) {
 
 
     @PostMapping("/register")
-    public Response<AuthenticationResponse> register(@RequestBody RegisterRequest request) {
+    public Response<AuthenticationResponse> register(@Valid @RequestBody RegisterRequest request) {
         return Response.ofSucceeded(authenticationService.register(request));
     }
 
