@@ -2,7 +2,6 @@ package com.vn.investion.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vn.investion.dto.Response;
-import com.vn.investion.dto.ipackage.InvestPackageRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.List;
 
@@ -29,16 +27,19 @@ public class ExceptionController {
 
     @ExceptionHandler(BusinessException.class)
     protected void handleBusinessException(BusinessException e, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        log.error(e);
         handError(e.code,e.httpStatus, e.message, response);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     protected void handleException(AccessDeniedException e, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        log.error(e);
         handError(4003,403, "No permission!", response);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     protected void handleMethodArgumentNotValidException(MethodArgumentNotValidException e, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        log.error(e);
         BindingResult bindingResult = e.getBindingResult();
         List<FieldError> fieldErrors = bindingResult.getFieldErrors();
         response.setStatus(400);
@@ -51,6 +52,7 @@ public class ExceptionController {
     }
     @ExceptionHandler(Exception.class)
     protected void handleException(Exception e, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        log.error(e);
         handError(5000,500, "Some thing went wrong!", response);
     }
     private void handError(int code, int status, String message, HttpServletResponse response) throws IOException {
