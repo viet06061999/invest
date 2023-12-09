@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.OffsetDateTime;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,6 +17,10 @@ public class UserResponse  {
     private String phone;
     private String code;
     private String refId;
-    private int point;
+    private Double point;
     Role role;
+    String createdBy;
+    String updatedBy;
+    OffsetDateTime createdAt;
+    OffsetDateTime updatedAt;
 }

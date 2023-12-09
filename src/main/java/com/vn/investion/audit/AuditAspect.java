@@ -1,7 +1,7 @@
 package com.vn.investion.audit;
 
 import com.vn.investion.model.define.AuditEntity;
-import com.vn.investion.model.User;
+import com.vn.investion.utils.JwtService;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -20,7 +20,7 @@ public class AuditAspect {
         Object[] args = joinPoint.getArgs();
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        var inputter = getUserName(authentication);
+        var inputter = JwtService.getUserName(authentication);
         var now = OffsetDateTime.now();
         if (args.length > 0 && args[0] instanceof AuditEntity auditEntity) {
             if (auditEntity.getCreatedAt() == null) {
@@ -31,13 +31,5 @@ public class AuditAspect {
             auditEntity.setUpdatedBy(inputter);
         }
         return joinPoint.proceed();
-    }
-
-    private String getUserName(Authentication authentication){
-        var data = authentication.getPrincipal();
-        if(data instanceof User user){
-            return user.getUsername();
-        }
-        return null;
     }
 }

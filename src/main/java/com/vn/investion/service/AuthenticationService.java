@@ -1,14 +1,14 @@
 package com.vn.investion.service;
 
-import com.vn.investion.exception.BusinessException;
-import com.vn.investion.mapper.Entity2AcountResponse;
-import com.vn.investion.utils.JwtService;
 import com.vn.investion.dto.auth.AuthenticationRequest;
 import com.vn.investion.dto.auth.AuthenticationResponse;
 import com.vn.investion.dto.auth.RegisterRequest;
-import com.vn.investion.repo.UserRepository;
-import com.vn.investion.model.define.Role;
+import com.vn.investion.exception.BusinessException;
+import com.vn.investion.mapper.Entity2AcountResponse;
 import com.vn.investion.model.User;
+import com.vn.investion.model.define.Role;
+import com.vn.investion.repo.UserRepository;
+import com.vn.investion.utils.JwtService;
 import com.vn.investion.utils.ReferralCodeGenerator;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -32,7 +32,7 @@ public record AuthenticationService(UserRepository userRepository,
                 .phone(request.getPhone())
                 .code(code)
                 .refId(request.getRefId())
-                .point(0)
+                .point(0.0)
                 .passwd(   passwordEncoder.encode(request.getPassword()))
                 .role(Role.USER)
                 .isActive(true)

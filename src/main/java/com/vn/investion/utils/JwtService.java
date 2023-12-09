@@ -1,10 +1,12 @@
 package com.vn.investion.utils;
 
+import com.vn.investion.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.security.Key;
@@ -51,7 +53,13 @@ public class JwtService {
         final var username = extractUsername(token);
         return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
     }
-
+    public static String getUserName(Authentication authentication){
+        var data = authentication.getPrincipal();
+        if(data instanceof User user){
+            return user.getUsername();
+        }
+        return null;
+    }
     private static boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }

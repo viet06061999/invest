@@ -29,4 +29,6 @@ public class InterestHis extends AuditEntity {
     @ManyToOne
     @JoinColumn(name = "package_id")
     private InvestPackage investPackage;
+
+    private Double remainPoint;
 }

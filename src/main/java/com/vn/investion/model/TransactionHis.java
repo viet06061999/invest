@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 @Table(name = "transaction_his")
 @Entity
 @Data
@@ -31,4 +33,44 @@ public class TransactionHis extends AuditEntity {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+    private Double remainPoint;
+    public TransactionHis copy() {
+        TransactionHis copy = new TransactionHis();
+        copy.setId(this.id);
+        copy.setTransactionType(this.transactionType);
+        copy.setStatus(this.status);
+        copy.setNumberAccount(this.numberAccount);
+        copy.setAccountName(this.accountName);
+        copy.setBank(this.bank);
+        copy.setAmount(this.amount);
+        copy.setDescription(this.description);
+        copy.setUser(this.user);
+        copy.setRemainPoint(this.remainPoint);
+        return copy;
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        TransactionHis other = (TransactionHis) obj;
+        return Objects.equals(id, other.id) &&
+                transactionType == other.transactionType &&
+                status == other.status &&
+                Objects.equals(numberAccount, other.numberAccount) &&
+                Objects.equals(accountName, other.accountName) &&
+                Objects.equals(bank, other.bank) &&
+                Objects.equals(amount, other.amount) &&
+                Objects.equals(description, other.description) &&
+                Objects.equals(user, other.user) &&
+                Objects.equals(remainPoint, other.remainPoint);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, transactionType, status, numberAccount, accountName, bank, amount, description, user, remainPoint);
+    }
 }

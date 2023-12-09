@@ -12,8 +12,6 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 @Table(name = "users")
 @Entity
@@ -35,23 +33,25 @@ public class User extends AuditEntity implements UserDetails {
     private String code;
     @Column(length = 10)
     private String refId;
-    private int point;
+    private Double point;
     @Column(length = 128)
     private String passwd;
     @Enumerated(EnumType.STRING)
     private Role role;
     private Boolean isActive;
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(name = "user_package",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "package_id"))
-    private Set<InvestPackage> investPackages = new HashSet<>();
+    private Boolean isLockPoint;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(name = "user_leader",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "package_id"))
-    private Set<InvestPackage> leaderPackages = new HashSet<>();
+//    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+//    @JoinTable(name = "user_package",
+//            joinColumns = @JoinColumn(name = "user_id"),
+//            inverseJoinColumns = @JoinColumn(name = "package_id"))
+//    private Set<InvestPackage> investPackages = new HashSet<>();
+//
+//    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+//    @JoinTable(name = "user_leader",
+//            joinColumns = @JoinColumn(name = "user_id"),
+//            inverseJoinColumns = @JoinColumn(name = "package_id"))
+//    private Set<InvestPackage> leaderPackages = new HashSet<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
