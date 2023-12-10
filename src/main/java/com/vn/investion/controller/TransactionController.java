@@ -24,6 +24,7 @@ public class TransactionController {
     private final TransactionService transactionService;
 
     @PostMapping("/transaction")
+    @Operation(description = "Tạo giao dịch chuyển tiền, rút tiền")
     public Response<TransactionResponse> createTransaction(
             Authentication authentication,
             @RequestBody TransactionRequest request) {
@@ -33,6 +34,7 @@ public class TransactionController {
 
     @PutMapping("/transaction/{transactionId}/approve")
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(description = "Duyệt giao dịch chuyển tiền/rút tiền")
     public Response<TransactionResponse> approveTransaction(@PathVariable Long transactionId) {
         return Response.ofSucceeded(transactionService.updateStatusTransaction(
                 new TransactionUpdateStatusRequest(TransactionStatus.APPROVE.name()),
@@ -40,6 +42,8 @@ public class TransactionController {
     }
 
     @PutMapping("/transaction/{transactionId}/cancel")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(description = "Hủy giao dịch chuyển tiền/rút tiền")
     public Response<TransactionResponse> cancelTransaction(@PathVariable Long transactionId) {
         return Response.ofSucceeded(transactionService.updateStatusTransaction(
                 new TransactionUpdateStatusRequest(TransactionStatus.CANCEL.name()),
@@ -47,6 +51,7 @@ public class TransactionController {
     }
 
     @PutMapping("/transaction/{transactionId}")
+    @Operation(description = "Update giao dịch chuyển tiền/rút tiền")
     public Response<TransactionResponse> updateTransaction(
             @RequestBody TransactionRequest request,
             @PathVariable Long transactionId) {
@@ -55,6 +60,7 @@ public class TransactionController {
 
     @GetMapping("/transactions")
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(description = "Lấy tất cả giao dịch chuyển tiền rút tiền")
     public Response<List<TransactionResponse>> getAll() {
         return Response.ofSucceeded(transactionService.getAll());
     }
