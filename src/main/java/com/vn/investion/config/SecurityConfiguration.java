@@ -62,7 +62,11 @@ public class SecurityConfiguration {
                         AntPathRequestMatcher
                                 .antMatcher("/actuator/*"),
                         AntPathRequestMatcher
-                                .antMatcher("/api/v1/auth/*")
+                                .antMatcher("/api/v1/auth/*"),
+                        AntPathRequestMatcher
+                                .antMatcher("/api/v1/package/invests"),
+                        AntPathRequestMatcher
+                                .antMatcher("/api/v1/package/leaders")
                 )
                 .permitAll()
                 .anyRequest()

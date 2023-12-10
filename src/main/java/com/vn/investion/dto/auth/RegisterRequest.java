@@ -1,5 +1,6 @@
 package com.vn.investion.dto.auth;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -19,5 +20,6 @@ public class RegisterRequest {
     @NotBlank(message = "Password is mandatory")
     String password;
     @NotBlank(message = "Reference id is mandatory")
+    @Schema(description = "Mã mời là code của user khác")
     String refId;
 }
