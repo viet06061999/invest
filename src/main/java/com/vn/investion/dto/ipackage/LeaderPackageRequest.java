@@ -17,7 +17,6 @@ public class LeaderPackageRequest {
     @Schema(example = "Đầu tư thông minh")
     String description;
     @Schema(example = "3")
-    @NotBlank(message = "Duration is mandatory")
     Integer duration;
     @Schema(example = "DAILY", allowableValues = {"HOURLY", "DAILY", "WEAKLY", "MONTHLY", "ANNUAL"})
     @NotBlank(message = "Invest type is mandatory")

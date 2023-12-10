@@ -1,9 +1,7 @@
 package com.vn.investion.utils;
 
 import com.vn.investion.model.User;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.Authentication;
@@ -53,19 +51,30 @@ public class JwtService {
         final var username = extractUsername(token);
         return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
     }
-    public static String getUserName(Authentication authentication){
+
+    public static String getUserName(Authentication authentication) {
         var data = authentication.getPrincipal();
-        if(data instanceof User user){
+        if (data instanceof User user) {
             return user.getUsername();
         }
         return null;
     }
-    private static boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
+
+    public static boolean isTokenExpired(String token) {
+        try {
+            return extractExpiration(token).before(new Date());
+        } catch (ExpiredJwtException e) {
+            return true;
+        }
     }
 
     private static Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
+        Jws<Claims> jws = Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token);
+        Claims claims = jws.getBody();
+        return claims.getExpiration();
     }
 
     private static Claims extractClaims(String token) {
