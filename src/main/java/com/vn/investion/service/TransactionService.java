@@ -39,7 +39,7 @@ public class TransactionService {
             throw new BusinessException(4004, "Reference Account not exists!", 404);
         }
         var user = userOptional.get();
-        if (user.getIsLockPoint()==Boolean.TRUE) {
+        if (user.getIsLockPoint() == Boolean.TRUE) {
             throw new BusinessException(4014, "Account Balance was locked for other transaction!", 400);
         }
         if (request.getTransactionType().equals(TransactionType.WITHDRAW) && user.getPoint() - request.getAmount() < 0) {
@@ -49,7 +49,10 @@ public class TransactionService {
         transaction.setUser(user);
         transaction.setRemainPoint(user.getPoint());
         var entity = Entity2TransactionResponse.INSTANCE.map(transactionHisRepository.save(transaction));
-        user.setIsLockPoint(true);
+        if (request.getTransactionType().equals(TransactionType.WITHDRAW)) {
+            user.setPoint(user.getPoint() - request.getAmount());
+        }
+//        user.setIsLockPoint(true);
         userRepository.save(user);
         var userName = user.getFirstname() + " " + user.getLastname() + "(" + user.getPhone() + ")";
         var function = "Nạp tiền";
@@ -69,18 +72,17 @@ public class TransactionService {
         var transaction = transactionOptional.get();
         var user = transaction.getUser();
         transaction.setStatus(Enum.valueOf(TransactionStatus.class, request.getStatus()));
-        if (transaction.getStatus().equals(TransactionStatus.APPROVE)) {
+        if ((transaction.getStatus().equals(TransactionStatus.APPROVE)
+                && transaction.getTransactionType().equals(TransactionType.DEPOSIT))
+                || (transaction.getStatus().equals(TransactionStatus.CANCEL)
+                && transaction.getTransactionType().equals(TransactionType.WITHDRAW))) {
             var balance = 0.0;
-            if (transaction.getTransactionType().equals(TransactionType.WITHDRAW)) {
-                balance -= transaction.getAmount();
-            } else if (transaction.getTransactionType().equals(TransactionType.DEPOSIT)) {
-                balance += transaction.getAmount();
-            }
+            balance += transaction.getAmount();
             user.setPoint(user.getPoint() + balance);
         }
         transaction.setRemainPoint(user.getPoint());
         transaction = transactionHisRepository.save(transaction);
-        user.setIsLockPoint(false);
+//        user.setIsLockPoint(false);
         userRepository.save(user);
         return Entity2TransactionResponse.INSTANCE.map(transactionHisRepository.save(transaction));
     }
@@ -98,7 +100,7 @@ public class TransactionService {
         }
         var copy = transaction.copy();
         TransactionRequest2Entity.INSTANCE.mapTo(request, transaction);
-        if(copy.equals(transaction)){
+        if (copy.equals(transaction)) {
             throw new BusinessException(4016, "Data not change!", 400);
         }
         transaction.setRemainPoint(user.getPoint());
@@ -114,12 +116,20 @@ public class TransactionService {
         return Entity2TransactionResponse.INSTANCE.map(transactionHisRepository.save(transaction));
     }
 
-    public List<TransactionResponse> getAll(){
-        return transactionHisRepository.findAll().stream().map(Entity2TransactionResponse.INSTANCE::map).toList();
+    public List<TransactionResponse> getAll() {
+        var entityList = transactionHisRepository.findAll();
+        if (entityList.isEmpty()) {
+            throw new BusinessException(4004, "Reference Transactions package not exists!", 404);
+        }
+        return entityList.stream().map(Entity2TransactionResponse.INSTANCE::map).toList();
     }
 
-    public List<TransactionResponse> getByUser(String phone){
-        return transactionHisRepository.findAllByUserPhone(phone).stream().map(Entity2TransactionResponse.INSTANCE::map).toList();
+    public List<TransactionResponse> getByUser(String phone) {
+        var entityList = transactionHisRepository.findAllByUserPhone(phone);
+        if (entityList.isEmpty()) {
+            throw new BusinessException(4004, "Reference Transactions package not exists!", 404);
+        }
+        return entityList.stream().map(Entity2TransactionResponse.INSTANCE::map).toList();
     }
 
     private void sendMessage(TransactionRequest request, String user, String function) {

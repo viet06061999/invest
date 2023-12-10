@@ -22,7 +22,7 @@ public record AuthenticationService(UserRepository userRepository,
                                     AuthenticationManager authenticationManager) {
     public AuthenticationResponse register(RegisterRequest request) {
         var refUser = userRepository.findByCode(request.getRefId());
-        if(refUser.isEmpty()){
+        if (refUser.isEmpty()) {
             throw new BusinessException(4004, "Reference Account not exists!", 404);
         }
         var code = ReferralCodeGenerator.generateReferralCode();
@@ -33,9 +33,10 @@ public record AuthenticationService(UserRepository userRepository,
                 .code(code)
                 .refId(request.getRefId())
                 .point(0.0)
-                .passwd(   passwordEncoder.encode(request.getPassword()))
+                .passwd(passwordEncoder.encode(request.getPassword()))
                 .role(Role.USER)
                 .isActive(true)
+                .isLockPoint(Boolean.FALSE)
                 .build();
 
         try {

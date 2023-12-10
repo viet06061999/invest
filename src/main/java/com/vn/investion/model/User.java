@@ -22,7 +22,7 @@ import java.util.Collection;
 public class User extends AuditEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
     @Column(length = 44)
     private String firstname;
     @Column(length = 44)

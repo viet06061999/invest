@@ -11,8 +11,8 @@ import java.time.OffsetDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class InvestPackageResponse {
     Integer id;
-    String duration;
-    Long amt;
+    Integer duration;
+    Double amt;
     InvestType investType;
     Double rate;
     String title;

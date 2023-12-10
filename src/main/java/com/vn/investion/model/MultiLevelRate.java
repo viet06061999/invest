@@ -15,7 +15,6 @@ public class MultiLevelRate extends AuditEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(length = 8)
-    private String level;
+    private Integer level;
     private Double rate;
 }

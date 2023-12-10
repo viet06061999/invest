@@ -28,11 +28,12 @@ public class LoggingFilterBean extends GenericFilterBean {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         ContentCachingRequestWrapper requestWrapper = requestWrapper(request);
         ContentCachingResponseWrapper responseWrapper = responseWrapper(response);
-
         chain.doFilter(requestWrapper, responseWrapper);
-
-        logRequest(requestWrapper);
-        logResponse(responseWrapper);
+        if (requestWrapper.getRequestURL().toString().contains("api/v1")) {
+            logRequest(requestWrapper);
+            logResponse(responseWrapper);
+        }
+        responseWrapper.copyBodyToResponse();
     }
 
     private void logRequest(ContentCachingRequestWrapper request) {
@@ -47,7 +48,6 @@ public class LoggingFilterBean extends GenericFilterBean {
         builder.append(headersToString(response.getHeaderNames(), response::getHeader));
         builder.append(new String(response.getContentAsByteArray()));
         log.info("Response: {}", builder);
-        response.copyBodyToResponse();
     }
 
     private String headersToString(Collection<String> headerNames, Function<String, String> headerValueResolver) {

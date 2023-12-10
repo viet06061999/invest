@@ -11,7 +11,7 @@ import java.time.OffsetDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserResponse  {
-    private Integer id;
+    private Long id;
     private String firstname;
     private String lastname;
     private String phone;

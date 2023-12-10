@@ -1,6 +1,5 @@
 package com.vn.investion.dto.ipackage;
 
-import com.vn.investion.model.define.InvestType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -17,9 +16,9 @@ public class LeaderPackageRequest {
     String title;
     @Schema(example = "Đầu tư thông minh")
     String description;
-    @Schema(example = "3M")
+    @Schema(example = "3")
     @NotBlank(message = "Duration is mandatory")
-    String duration;
+    Integer duration;
     @Schema(example = "DAILY", allowableValues = {"HOURLY", "DAILY", "WEAKLY", "MONTHLY", "ANNUAL"})
     @NotBlank(message = "Invest type is mandatory")
     String investType;

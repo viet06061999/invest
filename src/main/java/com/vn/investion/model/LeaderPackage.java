@@ -16,8 +16,7 @@ public class LeaderPackage extends AuditEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(length = 8)
-    private String duration;
+    private Integer duration;
     private Long amt;
     private InvestType investType;
     private Double rate;
