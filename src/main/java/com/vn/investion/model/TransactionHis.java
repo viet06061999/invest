@@ -33,7 +33,7 @@ public class TransactionHis extends AuditEntity {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-    private Double remainPoint;
+    private Double remainBalance;
     public TransactionHis copy() {
         TransactionHis copy = new TransactionHis();
         copy.setId(this.id);
@@ -45,7 +45,7 @@ public class TransactionHis extends AuditEntity {
         copy.setAmount(this.amount);
         copy.setDescription(this.description);
         copy.setUser(this.user);
-        copy.setRemainPoint(this.remainPoint);
+        copy.setRemainBalance(this.remainBalance);
         return copy;
     }
     @Override
@@ -66,11 +66,11 @@ public class TransactionHis extends AuditEntity {
                 Objects.equals(amount, other.amount) &&
                 Objects.equals(description, other.description) &&
                 Objects.equals(user, other.user) &&
-                Objects.equals(remainPoint, other.remainPoint);
+                Objects.equals(remainBalance, other.remainBalance);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, transactionType, status, numberAccount, accountName, bank, amount, description, user, remainPoint);
+        return Objects.hash(id, transactionType, status, numberAccount, accountName, bank, amount, description, user, remainBalance);
     }
 }

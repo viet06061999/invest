@@ -30,5 +30,5 @@ public class InterestHis extends AuditEntity {
     @JoinColumn(name = "package_id")
     private InvestPackage investPackage;
 
-    private Double remainPoint;
+    private Double remainBalance;
 }

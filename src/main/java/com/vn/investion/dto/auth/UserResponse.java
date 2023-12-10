@@ -18,8 +18,10 @@ public class UserResponse  {
     private String phone;
     @Schema(description = "Mã mời là code của user khác")
     private String code;
+    @Schema(description = "Mã người giới thiệu")
     private String refId;
-    private Double point;
+    @Schema(description = "Số dư hiện tại của user")
+    private Double balance;
     Role role;
     String createdBy;
     String updatedBy;

@@ -33,7 +33,7 @@ public class User extends AuditEntity implements UserDetails {
     private String code;
     @Column(length = 10)
     private String refId;
-    private Double point;
+    private Double balance;
     @Column(length = 128)
     private String passwd;
     @Enumerated(EnumType.STRING)

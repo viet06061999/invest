@@ -42,15 +42,15 @@ public class TransactionService {
         if (user.getIsLockPoint() == Boolean.TRUE) {
             throw new BusinessException(4014, "Account Balance was locked for other transaction!", 400);
         }
-        if (request.getTransactionType().equals(TransactionType.WITHDRAW) && user.getPoint() - request.getAmount() < 0) {
+        if (request.getTransactionType().equals(TransactionType.WITHDRAW) && user.getBalance() - request.getAmount() < 0) {
             throw new BusinessException(4015, "Account Balance not enough!", 400);
         }
         var transaction = TransactionRequest2Entity.INSTANCE.map(request);
         transaction.setUser(user);
-        transaction.setRemainPoint(user.getPoint());
+        transaction.setRemainBalance(user.getBalance());
         var entity = Entity2TransactionResponse.INSTANCE.map(transactionHisRepository.save(transaction));
         if (request.getTransactionType().equals(TransactionType.WITHDRAW)) {
-            user.setPoint(user.getPoint() - request.getAmount());
+            user.setBalance(user.getBalance() - request.getAmount());
         }
 //        user.setIsLockPoint(true);
         userRepository.save(user);
@@ -78,9 +78,9 @@ public class TransactionService {
                 && transaction.getTransactionType().equals(TransactionType.WITHDRAW))) {
             var balance = 0.0;
             balance += transaction.getAmount();
-            user.setPoint(user.getPoint() + balance);
+            user.setBalance(user.getBalance() + balance);
         }
-        transaction.setRemainPoint(user.getPoint());
+        transaction.setRemainBalance(user.getBalance());
         transaction = transactionHisRepository.save(transaction);
 //        user.setIsLockPoint(false);
         userRepository.save(user);
@@ -95,7 +95,7 @@ public class TransactionService {
         }
         var transaction = transactionOptional.get();
         var user = transaction.getUser();
-        if (request.getTransactionType().equals(TransactionType.WITHDRAW) && user.getPoint() - request.getAmount() < 0) {
+        if (request.getTransactionType().equals(TransactionType.WITHDRAW) && user.getBalance() - request.getAmount() < 0) {
             throw new BusinessException(4015, "Account Balance not enough!", 400);
         }
         var copy = transaction.copy();
@@ -103,7 +103,7 @@ public class TransactionService {
         if (copy.equals(transaction)) {
             throw new BusinessException(4016, "Data not change!", 400);
         }
-        transaction.setRemainPoint(user.getPoint());
+        transaction.setRemainBalance(user.getBalance());
         transaction = transactionHisRepository.save(transaction);
         user.setIsLockPoint(true);
         userRepository.save(user);

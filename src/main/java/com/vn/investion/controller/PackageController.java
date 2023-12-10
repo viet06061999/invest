@@ -1,15 +1,16 @@
 package com.vn.investion.controller;
 
 import com.vn.investion.dto.Response;
-import com.vn.investion.dto.ipackage.*;
+import com.vn.investion.dto.ipackage.InvestPackageRequest;
+import com.vn.investion.dto.ipackage.InvestPackageResponse;
+import com.vn.investion.dto.ipackage.LeaderPackageRequest;
+import com.vn.investion.dto.ipackage.LeaderPackageResponse;
 import com.vn.investion.service.PackageService;
-import com.vn.investion.utils.JwtService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -87,67 +88,5 @@ public class PackageController {
     @Operation(description = "Xóa gói leader")
     public Response<Boolean> deleteLeader(@PathVariable Long leaderPackageId) {
         return Response.ofSucceeded(packageService.deleteLeader(leaderPackageId));
-    }
-
-    @PutMapping("/invest/{investPackageId}/subscribe")
-    @Operation(description = "User đăng ký gói đầu tư")
-    public Response<UserPackageResponse> jointInvest(Authentication authentication, @PathVariable Long investPackageId) {
-        return Response.ofSucceeded(packageService.jointPackage(JwtService.getUserName(authentication), investPackageId));
-    }
-
-    @PutMapping("/leader/{leaderPackageId}/subscribe")
-    @Operation(description = "User đăng ký gói leader")
-    public Response<UserLeaderResponse> jointLeader(Authentication authentication, @PathVariable Long leaderPackageId) {
-        return Response.ofSucceeded(packageService.jointLeader(JwtService.getUserName(authentication), leaderPackageId));
-    }
-
-    @GetMapping("/user-invests")
-    @Operation(description = "Lấy tất cả gói đầu tư")
-    @PreAuthorize("hasRole('ADMIN')")
-    public Response<List<UserPackageResponse>> getAllUserPackage() {
-        return Response.ofSucceeded(packageService.getAllUserPackage());
-    }
-
-    @GetMapping("/user-leaders")
-    @Operation(description = "Lấy tất cả gói leader")
-    @PreAuthorize("hasRole('ADMIN')")
-    public Response<List<UserLeaderResponse>> getAllUserLeader() {
-        return Response.ofSucceeded(packageService.getAllUserLeader());
-    }
-
-    @GetMapping("user/leaders")
-    @Operation(description = "Lấy tất cả gói leader của user hiện tại")
-    public Response<List<UserLeaderResponse>> getUserLeader(Authentication authentication) {
-        return Response.ofSucceeded(packageService.getUserLeaderByPhone(JwtService.getUserName(authentication)));
-    }
-
-    @GetMapping("user/invests")
-    @Operation(description = "Lấy tất cả gói đầu tư của user hiện tại")
-    public Response<List<UserPackageResponse>> getUserPackage(Authentication authentication) {
-        return Response.ofSucceeded(packageService.getUserPackageByPhone(JwtService.getUserName(authentication)));
-    }
-
-    @PutMapping("/user-invests/{userInvestId}/withdraw-interest")
-    @Operation(description = "Rút lãi gói đầu tư")
-    public Response<UserPackageResponse> withdrawInvestInt(@PathVariable Long userInvestId) {
-        return Response.ofSucceeded(packageService.withdrawIntInvest(userInvestId));
-    }
-
-    @PutMapping("/user-leaders/{userLeaderId}/withdraw-interest")
-    @Operation(description = "Rút lãi gói leader")
-    public Response<UserLeaderResponse> withdrawLeaderInt(@PathVariable Long userLeaderId) {
-        return Response.ofSucceeded(packageService.withdrawIntLeader(userLeaderId));
-    }
-
-    @PutMapping("/user-invests/{userInvestId}/withdraw")
-    @Operation(description = "Rút vốn và lãi gói đầu tư")
-    public Response<UserPackageResponse> withdrawInvest(@PathVariable Long userInvestId) {
-        return Response.ofSucceeded(packageService.withdrawInvest(userInvestId));
-    }
-
-    @PutMapping("/user-leaders/{userLeaderId}/withdraw")
-    @Operation(description = "Rút vốn và lãi gói leader")
-    public Response<UserLeaderResponse> withdrawLeader(@PathVariable Long userLeaderId) {
-        return Response.ofSucceeded(packageService.withdrawLeader(userLeaderId));
     }
 }

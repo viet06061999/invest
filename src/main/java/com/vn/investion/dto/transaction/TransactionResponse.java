@@ -3,6 +3,7 @@ package com.vn.investion.dto.transaction;
 import com.vn.investion.dto.auth.UserResponse;
 import com.vn.investion.model.define.TransactionStatus;
 import com.vn.investion.model.define.TransactionType;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,7 +24,8 @@ public class TransactionResponse {
     Double amount;
     String description;
     UserResponse user;
-    Double remainPoint;
+    @Schema(description = "Số dư sau giao dịch của user")
+    Double remainBalance;
     String createdBy;
     String updatedBy;
     OffsetDateTime createdAt;

@@ -32,7 +32,7 @@ public record AuthenticationService(UserRepository userRepository,
                 .phone(request.getPhone())
                 .code(code)
                 .refId(request.getRefId())
-                .point(0.0)
+                .balance(0.0)
                 .passwd(passwordEncoder.encode(request.getPassword()))
                 .role(Role.USER)
                 .isActive(true)

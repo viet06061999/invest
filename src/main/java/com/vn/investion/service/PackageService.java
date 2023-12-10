@@ -3,6 +3,9 @@ package com.vn.investion.service;
 import com.vn.investion.dto.ipackage.*;
 import com.vn.investion.exception.BusinessException;
 import com.vn.investion.mapper.*;
+import com.vn.investion.model.InterestHis;
+import com.vn.investion.model.InvestPackage;
+import com.vn.investion.model.LeaderPackage;
 import com.vn.investion.model.User;
 import com.vn.investion.model.define.UserPackageStatus;
 import com.vn.investion.repo.*;
@@ -68,10 +71,10 @@ public class PackageService {
             throw new BusinessException(4004, "Reference invest package not exists!", 404);
         }
         var entity = entityOptional.get();
-        if (user.getPoint() - entity.getAmt() < 0) {
+        if (user.getBalance() - entity.getAmt() < 0) {
             throw new BusinessException(4015, "Account Balance not enough!", 400);
         }
-        user.setPoint(user.getPoint() - entity.getAmt());
+        user.setBalance(user.getBalance() - entity.getAmt());
         user = userRepository.save(user);
 
         var now = OffsetDateTime.now();
@@ -93,10 +96,10 @@ public class PackageService {
             throw new BusinessException(4004, "Reference leader package not exists!", 404);
         }
         var entity = entityOptional.get();
-        if (user.getPoint() - entity.getAmt() < 0) {
+        if (user.getBalance() - entity.getAmt() < 0) {
             throw new BusinessException(4015, "Account Balance not enough!", 400);
         }
-        user.setPoint(user.getPoint() - entity.getAmt());
+        user.setBalance(user.getBalance() - entity.getAmt());
         user = userRepository.save(user);
 
         var now = OffsetDateTime.now();
@@ -212,14 +215,15 @@ public class PackageService {
         entity.setInterestDate(OffsetDateTime.now());
         userPackageRepository.save(entity);
         var user = entity.getUser();
-        user.setPoint(user.getPoint() + interest);
+        user.setBalance(user.getBalance() + interest);
         userRepository.save(user);
         var refUser = getLeaderByRefId(user.getRefId());
         if(refUser != null){
             var rateF1 = interest * getRateOfF(1);
-            refUser.setPoint(refUser.getPoint() + rateF1);
+            refUser.setBalance(refUser.getBalance() + rateF1);
             userRepository.save(refUser);
         }
+        createInterestHis(null, entity.getInvestPackage(), user, entity.getAmt());
         return Entity2UserPackageResponse.INSTANCE.map(userPackageRepository.findById(userPackageId).get());
     }
 
@@ -237,11 +241,11 @@ public class PackageService {
         entity.setInterestDate(OffsetDateTime.now());
         userLeaderRepository.save(entity);
         var user = entity.getUser();
-        user.setPoint(user.getPoint() + interest);
+        user.setBalance(user.getBalance() + interest);
         userRepository.save(user);
+        createInterestHis(entity.getLeaderPackage(), null, user, entity.getAmt());
         return Entity2UserLeaderResponse.INSTANCE.map(userLeaderRepository.findById(userLeaderId).get());
     }
-
 
     @Transactional
     public UserLeaderResponse withdrawLeader(Long userLeaderId) {
@@ -260,7 +264,7 @@ public class PackageService {
         userLeaderRepository.save(entity);
         var total = entity.getAmt() + interest;
         var user = entity.getUser();
-        user.setPoint(user.getPoint() + total);
+        user.setBalance(user.getBalance() + total);
         userRepository.save(user);
         return Entity2UserLeaderResponse.INSTANCE.map(userLeaderRepository.findById(userLeaderId).get());
     }
@@ -282,12 +286,12 @@ public class PackageService {
         var interest = entity.getCurrentInterest();
         var total = entity.getAmt() + interest;
         var user = entity.getUser();
-        user.setPoint(user.getPoint() + total);
+        user.setBalance(user.getBalance() + total);
         userRepository.save(user);
         var refUser = getLeaderByRefId(user.getRefId());
         if(refUser != null){
             var rateF1 = interest * getRateOfF(1);
-            refUser.setPoint(refUser.getPoint() + rateF1);
+            refUser.setBalance(refUser.getBalance() + rateF1);
             userRepository.save(refUser);
         }
         return Entity2UserPackageResponse.INSTANCE.map(userPackageRepository.findById(userInvestId).get());
@@ -317,6 +321,10 @@ public class PackageService {
             }
         }
         return null;
+    }
+
+    private void createInterestHis(LeaderPackage leaderPackage, InvestPackage investPackage, User user, Double amt){
+        var intHist = new InterestHis(null, amt, user, leaderPackage, investPackage, user.getBalance());
     }
 
     private Double getRateOfF(Integer f){
