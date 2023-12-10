@@ -16,7 +16,7 @@ public class DateTimeUtils {
             case DAILY -> {
                return duration.toDays();
             }
-            case WEAKLY -> {
+            case WEEKLY -> {
                 return duration.toDays()/7;
             }
             case MONTHLY -> {
@@ -40,7 +40,7 @@ public class DateTimeUtils {
             case DAILY -> {
                 return now.plusDays(duration);
             }
-            case WEAKLY -> {
+            case WEEKLY -> {
                 return now.plusWeeks(duration);
             }
             case MONTHLY -> {
