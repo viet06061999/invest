@@ -2,6 +2,7 @@ package com.vn.investion.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vn.investion.dto.Response;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -27,9 +28,16 @@ public class ExceptionController {
 
     @ExceptionHandler(BusinessException.class)
     protected void handleBusinessException(BusinessException e, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        log.error(e);
+        log.error(e.getStackTrace());
         handError(e.code,e.httpStatus, e.message, response);
     }
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    protected void handleExpiredJwtException(ExpiredJwtException e, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        log.error(e.getStackTrace());
+        handError(5000,500, e.getMessage(), response);
+    }
+
 
     @ExceptionHandler(AccessDeniedException.class)
     protected void handleException(AccessDeniedException e, HttpServletRequest request, HttpServletResponse response) throws IOException {
