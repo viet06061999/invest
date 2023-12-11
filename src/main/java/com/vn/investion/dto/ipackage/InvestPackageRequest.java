@@ -27,4 +27,6 @@ public class InvestPackageRequest {
     @PositiveOrZero
     @Schema(example = "0.1", description = "Lãi suất đầu tư tính theo đơn vị investType, ví dụ này là 10% 1 ngày")
     Double rate;
+    @Schema(example = "image.png", description = "tên file ảnh")
+    String image;
 }
