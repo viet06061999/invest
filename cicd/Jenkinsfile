@@ -1,0 +1,41 @@
+pipeline {
+    agent any
+    tools{
+        maven 'M3'
+    }
+    stages{
+        stage('Build Maven'){
+            steps{
+                checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/viet06061999/invest']]])
+                sh 'mvn clean install -Dmaven.test.skip=true'
+            }
+        }
+        stage('Build Image'){
+            steps{
+                script{
+                     sh 'docker build -t vietnb99/devops-integration:v1.$BUILD_ID .'
+                     sh 'docker build -t vietnb99/devops-integration:latest .'
+                 }
+            }
+        }
+        stage('Push image to Hub'){
+             steps{
+                 script{
+                   withCredentials([string(credentialsId: 'dockerhub', variable: 'dockerhub')]) {
+                    sh 'docker login -u vietnb -p ${dockerhub}'
+
+                    }
+                    sh 'docker push vietnb/devops-integration:v1.$BUILD_ID'
+                    sh 'docker push vietnb/devops-integration:latest'
+                 }
+             }
+        }
+        stage('Deploy to k8s'){
+            steps{
+                script{
+                    kubernetesDeploy (configs: 'deploymentservice.yaml',kubeconfigId: 'k8sconfigpwd')
+                }
+            }
+        }
+    }
+}
