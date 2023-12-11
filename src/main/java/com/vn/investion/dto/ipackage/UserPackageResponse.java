@@ -2,6 +2,7 @@ package com.vn.investion.dto.ipackage;
 
 import com.vn.investion.dto.auth.UserResponse;
 import com.vn.investion.model.define.InvestType;
+import com.vn.investion.model.define.UserPackageStatus;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
@@ -21,6 +22,7 @@ public class UserPackageResponse {
     UserResponse user;
     Double currentInterest;
     InvestPackageResponse investPackage;
+    UserPackageStatus status;
     String createdBy;
     String updatedBy;
     OffsetDateTime createdAt;

@@ -1,5 +1,6 @@
 //package dev.sabri.securityjwt.dto.search;
 //
+//import com.vn.investion.dto.search.SearchCriteria;
 //import jakarta.persistence.criteria.CriteriaBuilder;
 //import jakarta.persistence.criteria.CriteriaQuery;
 //import jakarta.persistence.criteria.Predicate;
@@ -8,7 +9,6 @@
 //
 //import java.time.OffsetDateTime;
 //import java.util.List;
-//import java.util.Objects;
 //
 //public class FoodSpecification<T> implements Specification<T> {
 //

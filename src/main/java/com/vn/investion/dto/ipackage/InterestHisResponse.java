@@ -1,8 +1,7 @@
 package com.vn.investion.dto.ipackage;
 
 import com.vn.investion.dto.auth.UserResponse;
-import com.vn.investion.model.define.InvestType;
-import com.vn.investion.model.define.UserPackageStatus;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
@@ -11,18 +10,15 @@ import java.time.OffsetDateTime;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserLeaderResponse {
-    Long id;
-    Integer duration;
-    Double amt;
-    InvestType investType;
-    Double rate;
-    OffsetDateTime interestDate;
-    OffsetDateTime withdrawDate;
+public class InterestHisResponse {
+    Integer id;
+    Double amount;
     UserResponse user;
     LeaderPackageResponse leaderPackage;
-    Double currentInterest;
-    UserPackageStatus status;
+    InvestPackageResponse investPackage;
+    @Schema(description = "Thông tin của F1")
+    UserResponse refUser;
+    Double remainBalance;
     String createdBy;
     String updatedBy;
     OffsetDateTime createdAt;

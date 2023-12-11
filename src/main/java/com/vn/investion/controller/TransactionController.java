@@ -1,6 +1,8 @@
 package com.vn.investion.controller;
 
 import com.vn.investion.dto.Response;
+import com.vn.investion.dto.search.transaction.TransactionFilter;
+import com.vn.investion.dto.search.transaction.TransactionSpec;
 import com.vn.investion.dto.transaction.TransactionRequest;
 import com.vn.investion.dto.transaction.TransactionResponse;
 import com.vn.investion.dto.transaction.TransactionUpdateStatusRequest;
@@ -10,6 +12,7 @@ import com.vn.investion.utils.JwtService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -61,8 +64,10 @@ public class TransactionController {
     @GetMapping("/transactions")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(description = "Lấy tất cả giao dịch chuyển tiền rút tiền")
-    public Response<List<TransactionResponse>> getAll() {
-        return Response.ofSucceeded(transactionService.getAll());
+    public Response<List<TransactionResponse>> getAll(TransactionFilter transactionFilter) {
+        var pageable = PageRequest.of(transactionFilter.getPage(), transactionFilter.getPerPage());
+        var spec = new TransactionSpec(transactionFilter);
+        return Response.ofSucceeded(transactionService.getAll(spec, pageable));
     }
 
     @GetMapping("/user/transactions")

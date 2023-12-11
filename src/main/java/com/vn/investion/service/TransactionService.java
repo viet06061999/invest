@@ -8,12 +8,15 @@ import com.vn.investion.feign.TeleClient;
 import com.vn.investion.feign.model.SendMessageRequest;
 import com.vn.investion.mapper.Entity2TransactionResponse;
 import com.vn.investion.mapper.TransactionRequest2Entity;
+import com.vn.investion.model.TransactionHis;
 import com.vn.investion.model.define.TransactionStatus;
 import com.vn.investion.model.define.TransactionType;
 import com.vn.investion.repo.TransactionHisRepository;
 import com.vn.investion.repo.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -116,19 +119,13 @@ public class TransactionService {
         return Entity2TransactionResponse.INSTANCE.map(transactionHisRepository.save(transaction));
     }
 
-    public List<TransactionResponse> getAll() {
-        var entityList = transactionHisRepository.findAll();
-        if (entityList.isEmpty()) {
-            throw new BusinessException(4004, "Reference Transactions package not exists!", 404);
-        }
+    public List<TransactionResponse> getAll(Specification<TransactionHis> specification, Pageable pageable) {
+        var entityList = transactionHisRepository.findAll(specification, pageable);
         return entityList.stream().map(Entity2TransactionResponse.INSTANCE::map).toList();
     }
 
     public List<TransactionResponse> getByUser(String phone) {
         var entityList = transactionHisRepository.findAllByUserPhone(phone);
-        if (entityList.isEmpty()) {
-            throw new BusinessException(4004, "Reference Transactions package not exists!", 404);
-        }
         return entityList.stream().map(Entity2TransactionResponse.INSTANCE::map).toList();
     }
 

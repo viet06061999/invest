@@ -37,7 +37,8 @@ public class UserPackage extends AuditEntity {
     public Double getCurrentInterest(){
         OffsetDateTime now = OffsetDateTime.now();
         OffsetDateTime minDateTime = withdrawDate.isBefore(now) ? withdrawDate : now;
-        var durationCount = DateTimeUtils.getCountInterest(investType, interestDate, minDateTime);
+        OffsetDateTime minIntDateTime = interestDate.isBefore(minDateTime) ? interestDate : minDateTime;
+        var durationCount = DateTimeUtils.getCountInterest(investType, minIntDateTime, minDateTime);
         return amt*rate*durationCount;
     }
 

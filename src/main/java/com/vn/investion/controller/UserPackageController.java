@@ -1,6 +1,7 @@
 package com.vn.investion.controller;
 
 import com.vn.investion.dto.Response;
+import com.vn.investion.dto.ipackage.InterestHisResponse;
 import com.vn.investion.dto.ipackage.UserLeaderResponse;
 import com.vn.investion.dto.ipackage.UserPackageResponse;
 import com.vn.investion.service.PackageService;
@@ -61,7 +62,7 @@ public class UserPackageController {
     }
 
     @PutMapping("/user-invests/{userInvestId}/withdraw-interest")
-    @Operation(description = "Rút lãi gói đầu tư", parameters = {@Parameter(description = "Id lấy từ api /user/invests. User rút lãi gói đầu tư, lãi tính từ ngày rút lãi cuối cùng cho đến hiện tại")})
+    @Operation(description = "Rút lãi gói đầu tư", parameters = {@Parameter( name = "userInvestId", description = "Id lấy từ api /user/invests. User rút lãi gói đầu tư, lãi tính từ ngày rút lãi cuối cùng cho đến hiện tại")})
     public Response<UserPackageResponse> withdrawInvestInt(@PathVariable Long userInvestId) {
         return Response.ofSucceeded(packageService.withdrawIntInvest(userInvestId));
     }
@@ -82,5 +83,11 @@ public class UserPackageController {
     @Operation(description = "Rút lãi gói leader", parameters = {@Parameter(name = "userLeaderId",description = "Id lấy từ api /user/leaders. User vốn gói leader, hoàn trả lãi và vốn cho user, kết thúc gói leader")})
     public Response<UserLeaderResponse> withdrawLeader(@PathVariable Long userLeaderId) {
         return Response.ofSucceeded(packageService.withdrawLeader(userLeaderId));
+    }
+
+    @GetMapping("user/interest-his")
+    @Operation(description = "Lấy lịch sử rút lãi của user")
+    public Response<List<InterestHisResponse>> getIntHis(Authentication authentication) {
+        return Response.ofSucceeded(packageService.getIntHisUser(JwtService.getUserName(authentication)));
     }
 }

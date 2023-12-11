@@ -25,4 +25,5 @@ public class LeaderPackage extends AuditEntity {
     @Column(length = 5000)
     private String description;
     private Boolean isActive;
+    private String image;
 }

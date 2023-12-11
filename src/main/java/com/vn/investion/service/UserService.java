@@ -49,17 +49,11 @@ public class UserService {
 
     public List<UserBankResponse> getBankOfUser(String phone){
         var entityList = userBankRepository.getByPhone(phone);
-        if (entityList.isEmpty()) {
-            throw new BusinessException(4004, "Reference bank not exists!", 404);
-        }
         return entityList.stream().map(Entity2UserBankResponse.INSTANCE::map).toList();
     }
 
     public List<UserBankResponse> getBankAdmin(){
         var entityList = userBankRepository.getByRole(Role.ADMIN);
-        if (entityList.isEmpty()) {
-            throw new BusinessException(4004, "Reference bank not exists!", 404);
-        }
         return entityList.stream().map(Entity2UserBankResponse.INSTANCE::map).toList();
     }
 

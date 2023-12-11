@@ -29,3 +29,6 @@ telegram:
     token: bot6322541444:AAECk6b4TfGNxkq6SuDORbtiPnbRv9Qa6u4
     chat_id: -4088217061
     message: "<b>Yêu cầu %s qua ngân hàng</b>\nUser:<b>%s</b>\nSố tiền:<b>%s</b>\nNgân hàng:<b>%s</b>\nSố tài khoản:<b>%s</b>\nNội dung:<b>%s</b>"
+app:
+  upload:
+    dir: images/

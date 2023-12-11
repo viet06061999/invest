@@ -26,6 +26,7 @@ public class PackageService {
     private final UserRepository userRepository;
     private final UserLeaderRepository userLeaderRepository;
     private final MultiLevelRateRepository multiLevelRateRepository;
+    private final InterestHisRepository interestHisRepo;
 
     @Transactional
     public InvestPackageResponse createInvestPackage(InvestPackageRequest request) {
@@ -139,9 +140,6 @@ public class PackageService {
 
     public List<UserPackageResponse> getAllUserPackage() {
         var entityList = userPackageRepository.findAll();
-        if (entityList.isEmpty()) {
-            throw new BusinessException(4004, "Reference package not exists!", 404);
-        }
         return entityList.stream().map(Entity2UserPackageResponse.INSTANCE::map).toList();
     }
 
@@ -165,17 +163,11 @@ public class PackageService {
 
     public List<InvestPackageResponse> getAllInvest() {
         var entityList = investPackageRepository.findAllByIsActiveTrue();
-        if (entityList.isEmpty()) {
-            throw new BusinessException(4004, "Reference Invest package not exists!", 404);
-        }
         return entityList.stream().map(Entity2InvestResponse.INSTANCE::map).toList();
     }
 
     public List<LeaderPackageResponse> getAllLeader() {
         var entityList = leaderPackageRepository.findAllByIsActiveTrue();
-        if (entityList.isEmpty()) {
-            throw new BusinessException(4004, "Reference Leader package not exists!", 404);
-        }
         return entityList.stream().map(Entity2LeaderResponse.INSTANCE::map).toList();
     }
 
@@ -219,11 +211,9 @@ public class PackageService {
         userRepository.save(user);
         var refUser = getLeaderByRefId(user.getRefId());
         if(refUser != null){
-            var rateF1 = interest * getRateOfF(1);
-            refUser.setBalance(refUser.getBalance() + rateF1);
-            userRepository.save(refUser);
+            updateF1(interest, refUser, null, entity.getInvestPackage(), user);
         }
-        createInterestHis(null, entity.getInvestPackage(), user, entity.getAmt());
+        createInterestHis(null, entity.getInvestPackage(), user, interest, null);
         return Entity2UserPackageResponse.INSTANCE.map(userPackageRepository.findById(userPackageId).get());
     }
 
@@ -243,7 +233,7 @@ public class PackageService {
         var user = entity.getUser();
         user.setBalance(user.getBalance() + interest);
         userRepository.save(user);
-        createInterestHis(entity.getLeaderPackage(), null, user, entity.getAmt());
+        createInterestHis(entity.getLeaderPackage(), null, user, entity.getAmt(), null);
         return Entity2UserLeaderResponse.INSTANCE.map(userLeaderRepository.findById(userLeaderId).get());
     }
 
@@ -290,11 +280,13 @@ public class PackageService {
         userRepository.save(user);
         var refUser = getLeaderByRefId(user.getRefId());
         if(refUser != null){
-            var rateF1 = interest * getRateOfF(1);
-            refUser.setBalance(refUser.getBalance() + rateF1);
-            userRepository.save(refUser);
+            updateF1(interest, refUser, null, entity.getInvestPackage(), user);
         }
         return Entity2UserPackageResponse.INSTANCE.map(userPackageRepository.findById(userInvestId).get());
+    }
+
+    public List<InterestHisResponse> getIntHisUser(String phone){
+        return interestHisRepo.getInterestHisByPhone(phone).stream().map(Entity2InterestHisResponse.INSTANCE::map).toList();
     }
 
     private User getUserByPhoneLock(String phone) {
@@ -322,12 +314,19 @@ public class PackageService {
         }
         return null;
     }
-
-    private void createInterestHis(LeaderPackage leaderPackage, InvestPackage investPackage, User user, Double amt){
-        var intHist = new InterestHis(null, amt, user, leaderPackage, investPackage, user.getBalance());
+    private void createInterestHis(LeaderPackage leaderPackage, InvestPackage investPackage, User user, Double amt, User ref){
+        var intHist = new InterestHis(null, amt, user, leaderPackage, investPackage, ref, user.getBalance());
+        interestHisRepo.save(intHist);
     }
 
     private Double getRateOfF(Integer f){
         return multiLevelRateRepository.findByLevel(1).get().getRate();
+    }
+
+    private void updateF1(Double interest, User refUser, LeaderPackage leaderPackage, InvestPackage investPackage, User user) {
+        var rateF1 = interest * getRateOfF(1);
+        refUser.setBalance(refUser.getBalance() + rateF1);
+        userRepository.save(refUser);
+        createInterestHis(leaderPackage, investPackage, refUser, rateF1, user);
     }
 }
