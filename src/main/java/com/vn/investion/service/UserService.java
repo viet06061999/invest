@@ -9,7 +9,6 @@ import com.vn.investion.mapper.Entity2UserResponse;
 import com.vn.investion.mapper.UserBankRequest2Entity;
 import com.vn.investion.model.User;
 import com.vn.investion.model.UserBank;
-import com.vn.investion.model.UserHierarchy;
 import com.vn.investion.model.define.Role;
 import com.vn.investion.repo.UserBankRepository;
 import com.vn.investion.repo.UserRepository;
@@ -71,8 +70,6 @@ public class UserService {
         var userHierarchyList = new HashMap<Integer, List<UserResponse>>();
         for (Object[] row : resultList) {
             int level = (int) row[2];
-            var userHierarchy = new UserHierarchy();
-            userHierarchy.setLevel(level);
             var userLv = new User(
                     (Long) row[3],
                     (String) row[4],
