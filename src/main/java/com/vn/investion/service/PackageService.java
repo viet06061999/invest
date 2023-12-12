@@ -214,7 +214,9 @@ public class PackageService {
             updateF1(interest, refUser, null, entity.getInvestPackage(), user);
         }
         createInterestHis(null, entity.getInvestPackage(), user, interest, null);
-        return Entity2UserPackageResponse.INSTANCE.map(userPackageRepository.findById(userPackageId).get());
+        var res = Entity2UserPackageResponse.INSTANCE.map(userPackageRepository.findById(userPackageId).get());
+        res.setInterestWithdraw(interest);
+        return res;
     }
 
     @Transactional
@@ -234,7 +236,9 @@ public class PackageService {
         user.setBalance(user.getBalance() + interest);
         userRepository.save(user);
         createInterestHis(entity.getLeaderPackage(), null, user, entity.getAmt(), null);
-        return Entity2UserLeaderResponse.INSTANCE.map(userLeaderRepository.findById(userLeaderId).get());
+        var res = Entity2UserLeaderResponse.INSTANCE.map(userLeaderRepository.findById(userLeaderId).get());
+        res.setInterestWithdraw(interest);
+        return res;
     }
 
     @Transactional

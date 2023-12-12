@@ -98,7 +98,7 @@ public class UserService {
 //        return entityList.stream().map(Entity2UserBankResponse.INSTANCE::map).toList();
     }
 
-    private User getUserByPhone(String phone) {
+    public User getUserByPhone(String phone) {
         var userOptional = userRepository.findByPhone(phone);
         if (userOptional.isEmpty()) {
             throw new BusinessException(4004, "Reference Account not exists!", 404);

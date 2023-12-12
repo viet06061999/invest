@@ -23,6 +23,7 @@ public class UserLeaderResponse {
     LeaderPackageResponse leaderPackage;
     Double currentInterest;
     UserPackageStatus status;
+    Double interestWithdraw;
     String createdBy;
     String updatedBy;
     OffsetDateTime createdAt;

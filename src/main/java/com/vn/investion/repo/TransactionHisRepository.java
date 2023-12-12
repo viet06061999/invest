@@ -6,10 +6,12 @@ import com.vn.investion.model.define.TransactionStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public interface TransactionHisRepository extends JpaRepository<TransactionHis, Long>, JpaSpecificationExecutor<TransactionHis> {
     @Override
     @AutoAppendAuditInfo

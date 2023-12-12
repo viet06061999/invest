@@ -23,6 +23,7 @@ public class UserPackageResponse {
     Double currentInterest;
     InvestPackageResponse investPackage;
     UserPackageStatus status;
+    Double interestWithdraw;
     String createdBy;
     String updatedBy;
     OffsetDateTime createdAt;
