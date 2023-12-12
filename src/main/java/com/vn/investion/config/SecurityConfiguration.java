@@ -66,7 +66,9 @@ public class SecurityConfiguration {
                         AntPathRequestMatcher
                                 .antMatcher("/api/v1/package/invests"),
                         AntPathRequestMatcher
-                                .antMatcher("/api/v1/package/leaders")
+                                .antMatcher("/api/v1/package/leaders"),
+                        AntPathRequestMatcher
+                                .antMatcher("/api/v1/image/download/*")
                 )
                 .permitAll()
                 .anyRequest()

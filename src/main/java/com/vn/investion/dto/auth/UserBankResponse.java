@@ -13,4 +13,5 @@ public class UserBankResponse {
     private UserResponse user;
     private String bank;
     private String numberAccount;
+    private String accountName;
 }

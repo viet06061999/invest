@@ -23,24 +23,23 @@ public class User extends AuditEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(length = 10)
+    private String code;
     @Column(length = 44)
     private String firstname;
     @Column(length = 44)
     private String lastname;
+    @Column(length = 128)
+    private String passwd;
     @Column(unique = true, length = 12)
     private String phone;
     @Column(length = 10)
-    private String code;
-    @Column(length = 10)
     private String refId;
-    private Double balance;
-    @Column(length = 128)
-    private String passwd;
     @Enumerated(EnumType.STRING)
     private Role role;
     private Boolean isActive;
     private Boolean isLockPoint;
-
+    private Double balance;
 //    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
 //    @JoinTable(name = "user_package",
 //            joinColumns = @JoinColumn(name = "user_id"),

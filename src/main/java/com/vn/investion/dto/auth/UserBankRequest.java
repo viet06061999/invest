@@ -17,4 +17,7 @@ public class UserBankRequest {
 
     @Schema(description = "Số tài khoản", example = "9999999060699")
     private String numberAccount;
+
+    @Schema(description = "Tên tài khoản", example = "NGUYEN VAN A")
+    private String accountName;
 }

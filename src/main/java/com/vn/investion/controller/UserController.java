@@ -3,6 +3,7 @@ package com.vn.investion.controller;
 import com.vn.investion.dto.Response;
 import com.vn.investion.dto.auth.UserBankRequest;
 import com.vn.investion.dto.auth.UserBankResponse;
+import com.vn.investion.dto.auth.UserResponse;
 import com.vn.investion.service.UserService;
 import com.vn.investion.utils.JwtService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -48,5 +50,11 @@ public class UserController {
     @Operation(description = "Xóa tài khoản ngân hàng cho user")
     public Response<Boolean> deleteBank(Authentication authentication, @PathVariable Long userBankId) {
         return Response.ofSucceeded(service.delete(userBankId, JwtService.getUserName(authentication)));
+    }
+
+    @GetMapping("/user/hierarchy")
+    @Operation(description = "Lấy danh sách cấp F1, F2...F10 của user)")
+    public Response<Map<Integer, List<UserResponse>>> getUserHierarchy(Authentication authentication) {
+        return Response.ofSucceeded(service.getUserUserHierarchy(JwtService.getUserName(authentication)));
     }
 }

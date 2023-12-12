@@ -25,4 +25,6 @@ public class UserBank extends AuditEntity {
 
     @Column(length = 20)
     private String numberAccount;
+
+    private String accountName;
 }
