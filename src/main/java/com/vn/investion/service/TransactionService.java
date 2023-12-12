@@ -124,6 +124,11 @@ public class TransactionService {
         return entityList.stream().map(Entity2TransactionResponse.INSTANCE::map).toList();
     }
 
+    public List<TransactionResponse> getAll() {
+        var entityList = transactionHisRepository.findAll();
+        return entityList.stream().map(Entity2TransactionResponse.INSTANCE::map).toList();
+    }
+
     public List<TransactionResponse> getByUser(String phone) {
         var entityList = transactionHisRepository.findAllByUserPhone(phone);
         return entityList.stream().map(Entity2TransactionResponse.INSTANCE::map).toList();
