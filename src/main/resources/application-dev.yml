@@ -12,17 +12,12 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     properties:
       format_sql: true
+
+  cloud:
+    compatibility-verifier:
+      enabled: false
 server:
   port: 8088
-
-components:
-  securitySchemes:
-    bearerAuth:            # arbitrary name for the security scheme
-      type: http
-      scheme: bearer
-      bearerFormat: JWT    # optional, arbitrary value for documentation purposes
-security:
-  - bearerAuth: []
 
 telegram:
   bot:

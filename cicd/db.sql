@@ -5,6 +5,8 @@ create table hibernate_sequences
     next_val      bigint
 );
 
+create sequence users_id_seq
+    as integer;
 
 create table users
 (
