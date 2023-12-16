@@ -1,6 +1,7 @@
 package com.vn.investion.controller;
 
 import com.vn.investion.dto.Response;
+import com.vn.investion.dto.auth.TeamResponse;
 import com.vn.investion.dto.auth.UserBankRequest;
 import com.vn.investion.dto.auth.UserBankResponse;
 import com.vn.investion.dto.auth.UserResponse;
@@ -53,14 +54,20 @@ public class UserController {
     }
 
     @GetMapping("/user/hierarchy")
-    @Operation(description = "Lấy danh sách cấp F1, F2...F10 của user)")
+    @Operation(description = "Lấy danh sách cấp F1, F2...F10 của user")
     public Response<Map<Integer, List<UserResponse>>> getUserHierarchy(Authentication authentication) {
         return Response.ofSucceeded(service.getUserUserHierarchy(JwtService.getUserName(authentication)));
     }
 
     @GetMapping("/user/parent-hierarchy")
-    @Operation(description = "Lấy danh sách cấp F1, F2...F10 của user)")
+    @Operation(description = "Lấy danh sách cấp F1, F2...F10 của user")
     public Response<Map<Integer, UserResponse>> getParentHierarchy(Authentication authentication) {
         return Response.ofSucceeded(service.getParentHierarchy(JwtService.getUserName(authentication)));
+    }
+
+    @GetMapping("/user/my-team")
+    @Operation(description = "Lấy thông tin đội nhóm của user")
+    public Response<TeamResponse> getTeamInfo(Authentication authentication) {
+        return Response.ofSucceeded(service.getLeaderTeam(JwtService.getUserName(authentication)));
     }
 }

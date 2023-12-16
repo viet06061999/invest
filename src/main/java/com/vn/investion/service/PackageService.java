@@ -334,7 +334,7 @@ public class PackageService {
         return userOptional.get();
     }
 
-    private User getLeaderByCode(String code) {
+    public User getLeaderByCode(String code) {
         if (code == null) {
             return null;
         }

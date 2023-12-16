@@ -6,6 +6,7 @@ import com.vn.investion.model.define.TransactionStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -21,4 +22,17 @@ public interface TransactionHisRepository extends JpaRepository<TransactionHis, 
 
     @Query("from TransactionHis t where t.user.phone=:phone")
     List<TransactionHis> findAllByUserPhone(String phone);
+
+    @Query(value = "SELECT SUM(amount) FROM transaction_his " +
+            "WHERE user_id IN :userIds " +
+            "AND status = 1 " +
+            "AND transaction_type = :transactionType " +
+            "AND EXTRACT(YEAR FROM created_at) = :year " +
+            "AND EXTRACT(MONTH FROM created_at) = :month", nativeQuery = true)
+    Long getTotalAmountByUserIdsAndMonth(
+            @Param("userIds") List<Long> userIds,
+            @Param("year") int year,
+            @Param("month") int month,
+            int transactionType
+    );
 }
