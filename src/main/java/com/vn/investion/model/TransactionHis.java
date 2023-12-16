@@ -27,13 +27,14 @@ public class TransactionHis extends AuditEntity {
     private String accountName;
     @Column(length = 128)
     private String bank;
-    private Double amount;
+    private long amount;
     @Column(length = 1024)
     private String description;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-    private Double remainBalance;
+    private long remainDepositBalance;
+    private long remainAvailableBalance;
     public TransactionHis copy() {
         TransactionHis copy = new TransactionHis();
         copy.setId(this.id);
@@ -45,7 +46,8 @@ public class TransactionHis extends AuditEntity {
         copy.setAmount(this.amount);
         copy.setDescription(this.description);
         copy.setUser(this.user);
-        copy.setRemainBalance(this.remainBalance);
+        copy.setRemainDepositBalance(this.remainDepositBalance);
+        copy.setRemainAvailableBalance(this.remainAvailableBalance);
         return copy;
     }
     @Override
@@ -66,11 +68,22 @@ public class TransactionHis extends AuditEntity {
                 Objects.equals(amount, other.amount) &&
                 Objects.equals(description, other.description) &&
                 Objects.equals(user, other.user) &&
-                Objects.equals(remainBalance, other.remainBalance);
+                Objects.equals(remainDepositBalance, other.remainDepositBalance)&&
+                Objects.equals(remainAvailableBalance, other.remainAvailableBalance);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, transactionType, status, numberAccount, accountName, bank, amount, description, user, remainBalance);
+        return Objects.hash(id,
+                transactionType,
+                status,
+                numberAccount,
+                accountName,
+                bank,
+                amount,
+                description,
+                user,
+                remainDepositBalance,
+                remainAvailableBalance);
     }
 }

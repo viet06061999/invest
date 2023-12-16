@@ -25,7 +25,8 @@ public class TransactionResponse {
     String description;
     UserResponse user;
     @Schema(description = "Số dư sau giao dịch của user")
-    Double remainBalance;
+    private long remainDepositBalance;
+    private long remainAvailableBalance;
     String createdBy;
     String updatedBy;
     OffsetDateTime createdAt;

@@ -1,7 +1,7 @@
 package com.vn.investion.repo;
 
 import com.vn.investion.audit.AutoAppendAuditInfo;
-import com.vn.investion.model.InterestHis;
+import com.vn.investion.model.InvestHis;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -10,11 +10,11 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface InterestHisRepository extends JpaRepository<InterestHis, Long>, JpaSpecificationExecutor<InterestHis> {
+public interface InterestHisRepository extends JpaRepository<InvestHis, Long>, JpaSpecificationExecutor<InvestHis> {
     @Override
     @AutoAppendAuditInfo
-    <S extends InterestHis> S save(S entity);
+    <S extends InvestHis> S save(S entity);
 
-    @Query("from InterestHis i WHERE i.user.phone=:phone")
-    List<InterestHis> getInterestHisByPhone(String phone);
+    @Query("from InvestHis i WHERE i.user.phone=:phone")
+    List<InvestHis> getInterestHisByPhone(String phone);
 }

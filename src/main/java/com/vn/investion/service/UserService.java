@@ -81,7 +81,8 @@ public class UserService {
                     row[10].equals(Role.USER.name())? Role.USER: Role.ADMIN,
                     (Boolean) row[15],
                     (Boolean) row[16],
-                    (Double) row[17]
+                    (long) row[17],
+                    (long) row[18]
                     );
             try {
                 ZoneOffset systemZoneOffset = ZoneOffset.systemDefault().getRules().getOffset(java.time.Instant.now());
@@ -95,7 +96,43 @@ public class UserService {
             userHierarchyList.computeIfAbsent(level, k -> new ArrayList<>()).add(Entity2UserResponse.INSTANCE.map(userLv));
         }
         return userHierarchyList;
-//        return entityList.stream().map(Entity2UserBankResponse.INSTANCE::map).toList();
+    }
+
+    public Map<Integer, UserResponse> getParentHierarchy(String phone) {
+        var user = getUserByPhone(phone);
+        var resultList = userRepository.findParentHierarchy(user.getCode(), 3);
+        var userHierarchyList = new HashMap<Integer, UserResponse>();
+        for (Object[] row : resultList) {
+            int level = (int) row[2];
+            if(level == 0){
+                continue;
+            }
+            var userLv = new User(
+                    (Long) row[3],
+                    (String) row[4],
+                    (String) row[5],
+                    (String) row[6],
+                    (String) row[7],
+                    (String) row[8],
+                    (String) row[9],
+                    row[10].equals(Role.USER.name())? Role.USER: Role.ADMIN,
+                    (Boolean) row[15],
+                    (Boolean) row[16],
+                    (long) row[17],
+                    (long) row[18]
+            );
+            try {
+                ZoneOffset systemZoneOffset = ZoneOffset.systemDefault().getRules().getOffset(java.time.Instant.now());
+                userLv.setCreatedAt(((Timestamp) row[11]).toInstant().atOffset(systemZoneOffset));
+                userLv.setUpdatedAt(((Timestamp) row[13]).toInstant().atOffset(systemZoneOffset));
+                userLv.setCreatedBy((String) row[12]);
+                userLv.setUpdatedBy((String) row[14]);
+            }catch (Exception e){
+
+            }
+            userHierarchyList.put(level, Entity2UserResponse.INSTANCE.map(userLv));
+        }
+        return userHierarchyList;
     }
 
     public User getUserByPhone(String phone) {

@@ -6,17 +6,19 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Table(name = "interest_his")
+@Table(name = "invest_his")
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class InterestHis extends AuditEntity {
+public class InvestHis extends AuditEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private Double amount;
+    private long amount;
+
+    private long interestAmount;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -34,5 +36,5 @@ public class InterestHis extends AuditEntity {
     @JoinColumn(name = "ref_id")
     private User refUser;
 
-    private Double remainBalance;
+    private long remainAvailableBalance;
 }

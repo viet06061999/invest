@@ -20,8 +20,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
@@ -45,19 +46,19 @@ public class TransactionService {
         if (user.getIsLockPoint() == Boolean.TRUE) {
             throw new BusinessException(4014, "Account Balance was locked for other transaction!", 400);
         }
-        if (request.getTransactionType().equals(TransactionType.WITHDRAW) && user.getBalance() - request.getAmount() < 0) {
+        if (request.getTransactionType().equals(TransactionType.WITHDRAW) && user.getAvailableBalance() - request.getAmount() < 0) {
             throw new BusinessException(4015, "Account Balance not enough!", 400);
         }
         var transaction = TransactionRequest2Entity.INSTANCE.map(request);
         transaction.setUser(user);
-        transaction.setRemainBalance(user.getBalance());
         var entity = Entity2TransactionResponse.INSTANCE.map(transactionHisRepository.save(transaction));
         if (request.getTransactionType().equals(TransactionType.WITHDRAW)) {
-            user.setBalance(user.getBalance() - request.getAmount());
+            user.setAvailableBalance(user.getAvailableBalance() - request.getAmount());
         }
-//        user.setIsLockPoint(true);
-        userRepository.save(user);
-        var userName = user.getFirstname() + " " + user.getLastname() + "(" + user.getPhone() + ")";
+        user = userRepository.save(user);
+        transaction.setRemainAvailableBalance(user.getAvailableBalance());
+        transaction.setRemainDepositBalance(user.getDepositBalance());
+        var userName = user.getFirstname() + " " + user.getLastname() + " (" + user.getPhone() + ")";
         var function = "Nạp tiền";
         if (request.getTransactionType().equals(TransactionType.WITHDRAW)) {
             function = "Rút tiền";
@@ -77,13 +78,16 @@ public class TransactionService {
         transaction.setStatus(Enum.valueOf(TransactionStatus.class, request.getStatus()));
         if ((transaction.getStatus().equals(TransactionStatus.APPROVE)
                 && transaction.getTransactionType().equals(TransactionType.DEPOSIT))
-                || (transaction.getStatus().equals(TransactionStatus.CANCEL)
-                && transaction.getTransactionType().equals(TransactionType.WITHDRAW))) {
-            var balance = 0.0;
-            balance += transaction.getAmount();
-            user.setBalance(user.getBalance() + balance);
+        ) {
+            var balance = transaction.getAmount();
+            user.setDepositBalance(user.getDepositBalance() + balance);
         }
-        transaction.setRemainBalance(user.getBalance());
+        if (transaction.getStatus().equals(TransactionStatus.CANCEL)
+                && transaction.getTransactionType().equals(TransactionType.WITHDRAW)) {
+            user.setAvailableBalance(user.getDepositBalance() + transaction.getAmount());
+        }
+        transaction.setRemainDepositBalance(user.getDepositBalance());
+        transaction.setRemainAvailableBalance(user.getAvailableBalance());
         transaction = transactionHisRepository.save(transaction);
 //        user.setIsLockPoint(false);
         userRepository.save(user);
@@ -98,7 +102,7 @@ public class TransactionService {
         }
         var transaction = transactionOptional.get();
         var user = transaction.getUser();
-        if (request.getTransactionType().equals(TransactionType.WITHDRAW) && user.getBalance() - request.getAmount() < 0) {
+        if (request.getTransactionType().equals(TransactionType.WITHDRAW) && user.getAvailableBalance() - request.getAmount() < 0) {
             throw new BusinessException(4015, "Account Balance not enough!", 400);
         }
         var copy = transaction.copy();
@@ -106,7 +110,8 @@ public class TransactionService {
         if (copy.equals(transaction)) {
             throw new BusinessException(4016, "Data not change!", 400);
         }
-        transaction.setRemainBalance(user.getBalance());
+        transaction.setRemainAvailableBalance(user.getAvailableBalance());
+        transaction.setRemainDepositBalance(user.getDepositBalance());
         transaction = transactionHisRepository.save(transaction);
         user.setIsLockPoint(true);
         userRepository.save(user);
@@ -135,16 +140,18 @@ public class TransactionService {
     }
 
     private void sendMessage(TransactionRequest request, String user, String function) {
+        DecimalFormat decimalFormat = new DecimalFormat("#,### ₫");
+        String formattedAmount = decimalFormat.format(request.getAmount());
         var teleMessage = message.formatted(
                 function,
                 user,
-                BigDecimal.valueOf(request.getAmount()).toPlainString(),
+                formattedAmount,
                 request.getBank(),
                 request.getNumberAccount(),
                 request.getDescription());
         var messageRequest = new SendMessageRequest();
         messageRequest.setText(teleMessage);
         messageRequest.setChatId(chatId);
-        var res = teleClient.sendMessage(messageRequest);
+        CompletableFuture.supplyAsync(() -> teleClient.sendMessage(messageRequest));
     }
 }

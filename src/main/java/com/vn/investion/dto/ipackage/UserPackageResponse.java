@@ -14,7 +14,7 @@ import java.time.OffsetDateTime;
 public class UserPackageResponse {
     Long id;
     Integer duration;
-    Double amt;
+    long amt;
     InvestType investType;
     Double rate;
     OffsetDateTime interestDate;
@@ -23,7 +23,7 @@ public class UserPackageResponse {
     Double currentInterest;
     InvestPackageResponse investPackage;
     UserPackageStatus status;
-    Double interestWithdraw;
+    long interestWithdraw;
     String createdBy;
     String updatedBy;
     OffsetDateTime createdAt;

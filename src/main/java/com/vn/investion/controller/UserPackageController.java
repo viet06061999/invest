@@ -63,26 +63,26 @@ public class UserPackageController {
 
     @PutMapping("/user-invests/{userInvestId}/withdraw-interest")
     @Operation(description = "Rút lãi gói đầu tư", parameters = {@Parameter( name = "userInvestId", description = "Id lấy từ api /user/invests. User rút lãi gói đầu tư, lãi tính từ ngày rút lãi cuối cùng cho đến hiện tại")})
-    public Response<UserPackageResponse> withdrawInvestInt(@PathVariable Long userInvestId) {
-        return Response.ofSucceeded(packageService.withdrawIntInvest(userInvestId));
+    public Response<UserPackageResponse> withdrawInvestInt(Authentication authentication, @PathVariable Long userInvestId) {
+        return Response.ofSucceeded(packageService.withdrawIntInvest(userInvestId, JwtService.getUserName(authentication)));
     }
 
     @PutMapping("/user-leaders/{userLeaderId}/withdraw-interest")
     @Operation(description = "Rút lãi gói leader", parameters = {@Parameter(name = "userLeaderId",description = "Id lấy từ api /user/leaders. User rút lãi gói leader, lãi tính từ ngày rút lãi cuối cùng cho đến hiện tại")})
-    public Response<UserLeaderResponse> withdrawLeaderInt(@PathVariable Long userLeaderId) {
-        return Response.ofSucceeded(packageService.withdrawIntLeader(userLeaderId));
+    public Response<UserLeaderResponse> withdrawLeaderInt(Authentication authentication, @PathVariable Long userLeaderId) {
+        return Response.ofSucceeded(packageService.withdrawIntLeader(userLeaderId, JwtService.getUserName(authentication)));
     }
 
     @PutMapping("/user-invests/{userInvestId}/withdraw")
     @Operation(description = "Rút lãi gói đầu tư", parameters = {@Parameter(name = "userInvestId",description = "Id lấy từ api /user/leaders. User vốn gói leader, hoàn trả lãi và vốn cho user, kết thúc gói đầu tư")})
-    public Response<UserPackageResponse> withdrawInvest(@PathVariable Long userInvestId) {
-        return Response.ofSucceeded(packageService.withdrawInvest(userInvestId));
+    public Response<UserPackageResponse> withdrawInvest(Authentication authentication, @PathVariable Long userInvestId) {
+        return Response.ofSucceeded(packageService.withdrawInvest(userInvestId, JwtService.getUserName(authentication)));
     }
 
     @PutMapping("/user-leaders/{userLeaderId}/withdraw")
     @Operation(description = "Rút lãi gói leader", parameters = {@Parameter(name = "userLeaderId",description = "Id lấy từ api /user/leaders. User vốn gói leader, hoàn trả lãi và vốn cho user, kết thúc gói leader")})
-    public Response<UserLeaderResponse> withdrawLeader(@PathVariable Long userLeaderId) {
-        return Response.ofSucceeded(packageService.withdrawLeader(userLeaderId));
+    public Response<UserLeaderResponse> withdrawLeader(Authentication authentication, @PathVariable Long userLeaderId) {
+        return Response.ofSucceeded(packageService.withdrawLeader(userLeaderId, JwtService.getUserName(authentication)));
     }
 
     @GetMapping("user/interest-his")

@@ -13,12 +13,13 @@ import java.time.OffsetDateTime;
 public class InterestHisResponse {
     Integer id;
     Double amount;
+    Double interestAmount;
     UserResponse user;
     LeaderPackageResponse leaderPackage;
     InvestPackageResponse investPackage;
     @Schema(description = "Thông tin của F1")
     UserResponse refUser;
-    Double remainBalance;
+    Double remainAvailableBalance;
     String createdBy;
     String updatedBy;
     OffsetDateTime createdAt;

@@ -27,7 +27,7 @@ public class TransactionRequest{
     @NotBlank
     String accountName;
     @Schema(example = "10000", description = "Số tiền giao dịch")
-    Double amount;
+    Long amount;
     @Schema(example = "DEPOSIT", allowableValues = {"DEPOSIT", "WITHDRAW"}, description = "DEPOSIT: nạp tiền, WITHDRAW: rút tiền")
     @NotBlank(message = "Transaction type type is mandatory")
     TransactionType transactionType;

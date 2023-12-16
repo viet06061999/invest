@@ -20,8 +20,10 @@ public class UserResponse  {
     private String code;
     @Schema(description = "Mã người giới thiệu")
     private String refId;
-    @Schema(description = "Số dư hiện tại của user")
-    private Double balance;
+    @Schema(description = "Vốn đầu tư khả dụng của user")
+    private Double depositBalance;
+    @Schema(description = "Doanh thu đầu tư của user")
+    private Double availableBalance;
     Role role;
     String createdBy;
     String updatedBy;

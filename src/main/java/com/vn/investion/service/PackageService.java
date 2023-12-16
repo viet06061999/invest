@@ -1,14 +1,16 @@
 package com.vn.investion.service;
 
+import com.vn.investion.dto.auth.UserResponse;
 import com.vn.investion.dto.ipackage.*;
 import com.vn.investion.exception.BusinessException;
 import com.vn.investion.mapper.*;
-import com.vn.investion.model.InterestHis;
+import com.vn.investion.model.InvestHis;
 import com.vn.investion.model.InvestPackage;
 import com.vn.investion.model.LeaderPackage;
 import com.vn.investion.model.User;
 import com.vn.investion.model.define.UserPackageStatus;
 import com.vn.investion.repo.*;
+import com.vn.investion.utils.Commission;
 import com.vn.investion.utils.DateTimeUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +30,7 @@ public class PackageService {
     private final UserLeaderRepository userLeaderRepository;
     private final MultiLevelRateRepository multiLevelRateRepository;
     private final InterestHisRepository interestHisRepo;
+    private final UserService userService;
 
     @Transactional
     public InvestPackageResponse createInvestPackage(InvestPackageRequest request) {
@@ -72,10 +76,10 @@ public class PackageService {
             throw new BusinessException(4004, "Reference invest package not exists!", 404);
         }
         var entity = entityOptional.get();
-        if (user.getBalance() - entity.getAmt() < 0) {
+        if (user.getDepositBalance() - entity.getAmt() < 0) {
             throw new BusinessException(4015, "Account Balance not enough!", 400);
         }
-        user.setBalance(user.getBalance() - entity.getAmt());
+        user.setDepositBalance(user.getDepositBalance() - entity.getAmt());
         user = userRepository.save(user);
 
         var now = OffsetDateTime.now();
@@ -97,10 +101,10 @@ public class PackageService {
             throw new BusinessException(4004, "Reference leader package not exists!", 404);
         }
         var entity = entityOptional.get();
-        if (user.getBalance() - entity.getAmt() < 0) {
+        if (user.getDepositBalance() - entity.getAmt() < 0) {
             throw new BusinessException(4015, "Account Balance not enough!", 400);
         }
-        user.setBalance(user.getBalance() - entity.getAmt());
+        user.setDepositBalance(user.getDepositBalance() - entity.getAmt());
         user = userRepository.save(user);
 
         var now = OffsetDateTime.now();
@@ -194,9 +198,9 @@ public class PackageService {
     }
 
     @Transactional
-    public UserPackageResponse withdrawIntInvest(Long userPackageId) {
+    public UserPackageResponse withdrawIntInvest(Long userPackageId, String phone) {
         var entityOptional = userPackageRepository.findById(userPackageId);
-        if (entityOptional.isEmpty()) {
+        if (entityOptional.isEmpty() || !entityOptional.get().getUser().getPhone().equals(phone)) {
             throw new BusinessException(4004, "Reference invest package not exists!", 404);
         }
         var entity = entityOptional.get();
@@ -207,22 +211,19 @@ public class PackageService {
         entity.setInterestDate(OffsetDateTime.now());
         userPackageRepository.save(entity);
         var user = entity.getUser();
-        user.setBalance(user.getBalance() + interest);
+        user.setAvailableBalance(user.getAvailableBalance() + interest);
         userRepository.save(user);
-        var refUser = getLeaderByRefId(user.getRefId());
-        if(refUser != null){
-            updateF1(interest, refUser, null, entity.getInvestPackage(), user);
-        }
-        createInterestHis(null, entity.getInvestPackage(), user, interest, null);
+        updateF(interest, 0,null, entity.getInvestPackage(), user);
+        createInterestHis(null, entity.getInvestPackage(), user, 0, interest, null);
         var res = Entity2UserPackageResponse.INSTANCE.map(userPackageRepository.findById(userPackageId).get());
         res.setInterestWithdraw(interest);
         return res;
     }
 
     @Transactional
-    public UserLeaderResponse withdrawIntLeader(Long userLeaderId) {
+    public UserLeaderResponse withdrawIntLeader(Long userLeaderId, String phone) {
         var entityOptional = userLeaderRepository.findById(userLeaderId);
-        if (entityOptional.isEmpty()) {
+        if (entityOptional.isEmpty() || !entityOptional.get().getUser().getPhone().equals(phone)) {
             throw new BusinessException(4004, "Reference Leader package not exists!", 404);
         }
         var entity = entityOptional.get();
@@ -233,63 +234,66 @@ public class PackageService {
         entity.setInterestDate(OffsetDateTime.now());
         userLeaderRepository.save(entity);
         var user = entity.getUser();
-        user.setBalance(user.getBalance() + interest);
+        user.setAvailableBalance(user.getAvailableBalance() + interest);
         userRepository.save(user);
-        createInterestHis(entity.getLeaderPackage(), null, user, entity.getAmt(), null);
+        createInterestHis(entity.getLeaderPackage(), null, user, 0, interest, null);
         var res = Entity2UserLeaderResponse.INSTANCE.map(userLeaderRepository.findById(userLeaderId).get());
         res.setInterestWithdraw(interest);
         return res;
     }
 
     @Transactional
-    public UserLeaderResponse withdrawLeader(Long userLeaderId) {
+    public UserLeaderResponse withdrawLeader(Long userLeaderId, String phone) {
         var entityOptional = userLeaderRepository.findByIdAndStatus(userLeaderId, UserPackageStatus.INVESTING);
-        if (entityOptional.isEmpty()) {
+        if (entityOptional.isEmpty() || !entityOptional.get().getUser().getPhone().equals(phone)) {
             throw new BusinessException(4004, "Reference Leader package not exists!", 404);
         }
         var entity = entityOptional.get();
-        var interest = entity.getCurrentInterest();
         if (entity.getInvestDuration() < entity.getDuration()) {
             throw new BusinessException(4016, "Not enough duration to withdraw!", 400);
         }
+        var interest = entity.getCurrentInterest();
+        var total = entity.getAmt() + interest;
+        var user = entity.getUser();
         entity.setWithdrawDate(OffsetDateTime.now());
         entity.setInterestDate(OffsetDateTime.now());
         entity.setStatus(UserPackageStatus.COMPLETED);
         userLeaderRepository.save(entity);
-        var total = entity.getAmt() + interest;
-        var user = entity.getUser();
-        user.setBalance(user.getBalance() + total);
+        user.setAvailableBalance(user.getAvailableBalance() + total);
         userRepository.save(user);
-        return Entity2UserLeaderResponse.INSTANCE.map(userLeaderRepository.findById(userLeaderId).get());
+        createInterestHis(entity.getLeaderPackage(), null, user, entity.getAmt(), interest, null);
+        var res = Entity2UserLeaderResponse.INSTANCE.map(userLeaderRepository.findById(userLeaderId).get());
+        res.setInterestWithdraw(interest);
+        return res;
     }
 
     @Transactional
-    public UserPackageResponse withdrawInvest(Long userInvestId) {
+    public UserPackageResponse withdrawInvest(Long userInvestId, String phone) {
         var entityOptional = userPackageRepository.findByIdAndStatus(userInvestId, UserPackageStatus.INVESTING);
-        if (entityOptional.isEmpty()) {
+        if (entityOptional.isEmpty() || !entityOptional.get().getUser().getPhone().equals(phone)) {
             throw new BusinessException(4004, "Reference Invest package not exists!", 404);
         }
         var entity = entityOptional.get();
         if (entity.getInvestDuration() < entity.getDuration()) {
             throw new BusinessException(4016, "Not enough duration to withdraw!", 400);
         }
+        var interest = entity.getCurrentInterest();
+        var total = entity.getAmt() + interest;
+        var user = entity.getUser();
         entity.setWithdrawDate(OffsetDateTime.now());
         entity.setInterestDate(OffsetDateTime.now());
         entity.setStatus(UserPackageStatus.COMPLETED);
         userPackageRepository.save(entity);
-        var interest = entity.getCurrentInterest();
-        var total = entity.getAmt() + interest;
-        var user = entity.getUser();
-        user.setBalance(user.getBalance() + total);
+        user.setAvailableBalance(user.getAvailableBalance() + total);
         userRepository.save(user);
-        var refUser = getLeaderByRefId(user.getRefId());
-        if(refUser != null){
-            updateF1(interest, refUser, null, entity.getInvestPackage(), user);
-        }
-        return Entity2UserPackageResponse.INSTANCE.map(userPackageRepository.findById(userInvestId).get());
+        updateF(interest, 0,null, entity.getInvestPackage(), user);
+        createInterestHis(null, entity.getInvestPackage(), user, entity.getAmt(), interest, null);
+        var res = Entity2UserPackageResponse.INSTANCE.map(userPackageRepository.findById(userInvestId).get());
+        res.setInterestWithdraw(interest);
+        return res;
     }
 
-    public List<InterestHisResponse> getIntHisUser(String phone){
+    public List<InterestHisResponse> getIntHisUser(String phone) {
         return interestHisRepo.getInterestHisByPhone(phone).stream().map(Entity2InterestHisResponse.INSTANCE::map).toList();
     }
 
@@ -304,33 +308,47 @@ public class PackageService {
         return userOptional.get();
     }
 
-    private User getLeaderByRefId(String ref){
-        if(ref == null){
+    private User getLeaderByCode(String code) {
+        if (code == null) {
             return null;
         }
-        var optional = userRepository.findByCode(ref);
-        if (optional.isPresent()){
+        var optional = userRepository.findByCode(code);
+        if (optional.isPresent()) {
             var user = optional.get();
             var userLeaders = userLeaderRepository.findAllByUserStatus(user.getId(), UserPackageStatus.INVESTING);
-            if(!userLeaders.isEmpty()){
+            if (!userLeaders.isEmpty()) {
                 return user;
             }
         }
         return null;
     }
-    private void createInterestHis(LeaderPackage leaderPackage, InvestPackage investPackage, User user, Double amt, User ref){
-        var intHist = new InterestHis(null, amt, user, leaderPackage, investPackage, ref, user.getBalance());
+
+    private void createInterestHis(LeaderPackage leaderPackage,
+                                   InvestPackage investPackage,
+                                   User user,
+                                   long amt,
+                                   long intAmt,
+                                   User ref) {
+        var intHist = new InvestHis(null, amt, intAmt, user, leaderPackage, investPackage, ref, user.getAvailableBalance());
         interestHisRepo.save(intHist);
     }
 
-    private Double getRateOfF(Integer f){
-        return multiLevelRateRepository.findByLevel(1).get().getRate();
+    private Double getRateOfF(Integer f) {
+        return Commission.rate.get(f);
     }
 
-    private void updateF1(Double interest, User refUser, LeaderPackage leaderPackage, InvestPackage investPackage, User user) {
-        var rateF1 = interest * getRateOfF(1);
-        refUser.setBalance(refUser.getBalance() + rateF1);
-        userRepository.save(refUser);
-        createInterestHis(leaderPackage, investPackage, refUser, rateF1, user);
+    private void updateF(long interest, long amt, LeaderPackage leaderPackage, InvestPackage investPackage, User user) {
+        //todo update logic + ls for f
+        Map<Integer, UserResponse> userLv = userService.getParentHierarchy(user.getPhone());
+        userLv.entrySet().forEach(entry -> {
+            var userLeader = getLeaderByCode(entry.getValue().getCode());
+            if (userLeader != null) {
+                var intRate = (long) (interest * getRateOfF(entry.getKey()));
+                var amtRate = (long) (amt * getRateOfF(entry.getKey()));
+                userLeader.setAvailableBalance(userLeader.getAvailableBalance() + intRate + amtRate);
+                userRepository.save(userLeader);
+                createInterestHis(leaderPackage, investPackage, userLeader, amtRate, intRate, user);
+            }
+        });
     }
 }

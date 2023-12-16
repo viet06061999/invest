@@ -39,18 +39,8 @@ public class User extends AuditEntity implements UserDetails {
     private Role role;
     private Boolean isActive;
     private Boolean isLockPoint;
-    private Double balance;
-//    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-//    @JoinTable(name = "user_package",
-//            joinColumns = @JoinColumn(name = "user_id"),
-//            inverseJoinColumns = @JoinColumn(name = "package_id"))
-//    private Set<InvestPackage> investPackages = new HashSet<>();
-//
-//    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-//    @JoinTable(name = "user_leader",
-//            joinColumns = @JoinColumn(name = "user_id"),
-//            inverseJoinColumns = @JoinColumn(name = "package_id"))
-//    private Set<InvestPackage> leaderPackages = new HashSet<>();
+    private long depositBalance = 0;
+    private long availableBalance = 0;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
