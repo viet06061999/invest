@@ -10,115 +10,89 @@ create sequence users_id_seq
 
 create table users
 (
-    id            bigint default nextval('users_id_seq'::regclass) not null
+    id                bigint default nextval('users_id_seq'::regclass) not null
         primary key,
-    code          varchar(255),
-    firstname     varchar(255),
-    lastname      varchar(255),
-    passwd        varchar(255),
-    phone         varchar(255)
+    code              varchar(10),
+    firstname         varchar(44),
+    lastname          varchar(44),
+    passwd            varchar(128),
+    phone             varchar(12)
         constraint uk_du5v5sr43g5bfnji4vb8hg5s3
             unique,
-    ref_id        varchar(255),
-    role          varchar(255),
-    created_at    timestamp(6),
-    created_by    varchar(255),
-    updated_at    timestamp(6),
-    updated_by    varchar(255),
-    is_active     boolean,
-    is_lock_point boolean,
-    balance       double precision
+    ref_id            varchar(10),
+    role              varchar(255),
+    created_at        timestamp(6) with time zone,
+    created_by        varchar(255),
+    updated_at        timestamp(6) with time zone,
+    updated_by        varchar(255),
+    is_active         boolean,
+    is_lock_point     boolean,
+    available_balance bigint,
+    deposit_balance   bigint
 );
-
 
 create table invest_package
 (
     id          serial
         primary key,
-    created_at  timestamp(6),
+    created_at  timestamp(6) with time zone,
     created_by  varchar(255),
-    updated_at  timestamp(6),
+    updated_at  timestamp(6) with time zone,
     updated_by  varchar(255),
-    amt         double precision,
-    duration    integer,
-    invest_type smallint,
-    rate        double precision,
+    amt         bigint not null,
     description varchar(5000),
-    title       varchar(256),
+    duration    integer,
+    image       varchar(255),
+    invest_type smallint
+        constraint invest_package_invest_type_check
+            check ((invest_type >= 0) AND (invest_type <= 4)),
     is_active   boolean,
-    image       varchar(255)
+    rate        double precision,
+    title       varchar(256)
 );
-
-
 
 create table leader_package
 (
     id          serial
         primary key,
-    created_at  timestamp(6),
+    created_at  timestamp(6) with time zone,
     created_by  varchar(255),
-    updated_at  timestamp(6),
+    updated_at  timestamp(6) with time zone,
     updated_by  varchar(255),
     amt         bigint,
-    duration    integer,
-    invest_type smallint,
-    rate        double precision,
     description varchar(5000),
-    title       varchar(256),
-    is_active   boolean,
-    image       varchar(255)
-);
-
-
-create table user_package
-(
-    id            bigserial
-        primary key,
-    package_id    integer
-        constraint fk8hpqt7scsojf6d1dsl0620l3l
-            references invest_package,
-    user_id       bigint
-        constraint fk23wrg2jabxivswndr07og5q0y
-            references users,
-    created_at    timestamp(6),
-    created_by    varchar(255),
-    updated_at    timestamp(6),
-    updated_by    varchar(255),
-    withdraw_date timestamp(6),
-    amt           double precision,
-    duration      integer,
-    interest_date timestamp(6) with time zone,
-    invest_type   smallint
-        constraint user_package_invest_type_check
+    duration    integer,
+    image       varchar(255),
+    invest_type smallint
+        constraint leader_package_invest_type_check
             check ((invest_type >= 0) AND (invest_type <= 4)),
-    rate          double precision,
-    status        smallint
-        constraint user_package_status_check
-            check ((status >= 0) AND (status <= 1))
+    is_active   boolean,
+    rate        double precision,
+    title       varchar(256)
 );
 
-
-create table interest_his
+create table invest_his
 (
-    id             serial
+    id                       serial
         primary key,
-    created_at     timestamp(6),
-    created_by     varchar(255),
-    updated_at     timestamp(6),
-    updated_by     varchar(255),
-    amount         double precision,
-    package_id     integer
-        constraint fkrirslxeuwcahof5t65b49hiwa
+    created_at               timestamp(6) with time zone,
+    created_by               varchar(255),
+    updated_at               timestamp(6) with time zone,
+    updated_by               varchar(255),
+    amount                   bigint not null,
+    interest_amount          bigint not null,
+    remain_available_balance bigint not null,
+    package_id               integer
+        constraint fk4xxtplglhbr2r6m4l6ipfmgs4
             references invest_package,
-    leader_id      integer
-        constraint fk6uwk035o1arfsamsavf8mgw0k
+    leader_id                integer
+        constraint fkm58m973ym7h9qtuai87wq6fa4
             references leader_package,
-    user_id        bigint
-        constraint fkiyailecn6sfnvhb3afcti9i6t
+    ref_id                   bigint
+        constraint fk6ad4pc4s87wpbv2gwfhmxfgq5
             references users,
-    remain_balance double precision,
-    ref_id         bigint
-        constraint fk6xl2tsm7d7v7w8gkjmfdy7uwx
+    user_id                  bigint
+        constraint fk2090hghmbyo4nswl5h1w7t1dn
             references users
 );
 
@@ -126,52 +100,74 @@ create table multi_level_rate
 (
     id         serial
         primary key,
-    created_at timestamp(6),
+    created_at timestamp(6) with time zone,
     created_by varchar(255),
-    updated_at timestamp(6),
+    updated_at timestamp(6) with time zone,
     updated_by varchar(255),
     level      integer,
     rate       double precision
 );
 
+create table report
+(
+    id         bigserial
+        primary key,
+    created_at timestamp(6) with time zone,
+    created_by varchar(255),
+    updated_at timestamp(6) with time zone,
+    updated_by varchar(255),
+    attach     varchar(255),
+    report     varchar(255),
+    status     smallint
+        constraint report_status_check
+            check ((status >= 0) AND (status <= 3)),
+    title      varchar(255),
+    user_id    bigint
+        constraint fkq50wsn94sc3mi90gtidk0k34a
+            references users
+);
 
 create table transaction_his
 (
-    id               serial
+    id                       serial
         primary key,
-    created_at       timestamp(6),
-    created_by       varchar(255),
-    updated_at       timestamp(6),
-    updated_by       varchar(255),
-    account_name     varchar(128),
-    amount           double precision,
-    bank             varchar(128),
-    description      varchar(1024),
-    number_account   varchar(20),
-    status           smallint,
-    transaction_type smallint,
-    user_id          bigint
+    created_at               timestamp(6) with time zone,
+    created_by               varchar(255),
+    updated_at               timestamp(6) with time zone,
+    updated_by               varchar(255),
+    account_name             varchar(128),
+    amount                   bigint not null,
+    bank                     varchar(128),
+    description              varchar(1024),
+    number_account           varchar(20),
+    remain_available_balance bigint not null,
+    remain_deposit_balance   bigint not null,
+    status                   smallint
+        constraint transaction_his_status_check
+            check ((status >= 0) AND (status <= 2)),
+    transaction_type         smallint
+        constraint transaction_his_transaction_type_check
+            check ((transaction_type >= 0) AND (transaction_type <= 1)),
+    user_id                  bigint
         constraint fk4khpekatuie5ykhe2nrnet0eh
-            references users,
-    remain_balance   double precision
+            references users
 );
 
 create table user_bank
 (
     id             bigserial
         primary key,
-    created_at     timestamp(6),
+    created_at     timestamp(6) with time zone,
     created_by     varchar(255),
-    updated_at     timestamp(6),
+    updated_at     timestamp(6) with time zone,
     updated_by     varchar(255),
+    account_name   varchar(255),
     bank           varchar(256),
     number_account varchar(20),
     user_id        bigint
         constraint fkacjnlbp54g1psri2bt17q739r
-            references users,
-    account_name   varchar
+            references users
 );
-
 
 create table user_leader
 (
@@ -181,7 +177,7 @@ create table user_leader
     created_by    varchar(255),
     updated_at    timestamp(6) with time zone,
     updated_by    varchar(255),
-    amt           double precision,
+    amt           bigint not null,
     duration      integer,
     interest_date timestamp(6) with time zone,
     invest_type   smallint
@@ -200,23 +196,30 @@ create table user_leader
             references users
 );
 
-create table report
+create table user_package
 (
-    id         bigserial
+    id            bigserial
         primary key,
-    created_at timestamp(6) with time zone,
-    created_by varchar(255),
-    updated_at timestamp(6) with time zone,
-    updated_by varchar(255),
-    attach     varchar(255),
-    report     varchar(255),
-    user_id    bigint
-        constraint fkq50wsn94sc3mi90gtidk0k34a
-            references users,
-    status     smallint
-        constraint report_status_check
-            check ((status >= 0) AND (status <= 3)),
-    title      varchar(255)
+    created_at    timestamp(6) with time zone,
+    created_by    varchar(255),
+    updated_at    timestamp(6) with time zone,
+    updated_by    varchar(255),
+    amt           bigint not null,
+    duration      integer,
+    interest_date timestamp(6) with time zone,
+    invest_type   smallint
+        constraint user_package_invest_type_check
+            check ((invest_type >= 0) AND (invest_type <= 4)),
+    rate          double precision,
+    status        smallint
+        constraint user_package_status_check
+            check ((status >= 0) AND (status <= 1)),
+    withdraw_date timestamp(6) with time zone,
+    package_id    integer
+        constraint fk8hpqt7scsojf6d1dsl0620l3l
+            references invest_package,
+    user_id       bigint
+        constraint fk23wrg2jabxivswndr07og5q0y
+            references users
 );
-
 
