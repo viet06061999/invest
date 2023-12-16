@@ -85,8 +85,8 @@ public class UserPackageController {
         return Response.ofSucceeded(packageService.withdrawLeader(userLeaderId, JwtService.getUserName(authentication)));
     }
 
-    @GetMapping("user/interest-his")
-    @Operation(description = "Lấy lịch sử rút lãi của user")
+    @GetMapping("user/invest-his")
+    @Operation(description = "Lấy lịch sử rút tiền gói đầu tư của user")
     public Response<List<InterestHisResponse>> getIntHis(Authentication authentication) {
         return Response.ofSucceeded(packageService.getIntHisUser(JwtService.getUserName(authentication)));
     }

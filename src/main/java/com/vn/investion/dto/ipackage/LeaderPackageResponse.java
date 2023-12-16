@@ -17,6 +17,8 @@ public class LeaderPackageResponse {
     Double rate;
     String title;
     String description;
+    Long remainBuy;
+    Long userCanBuy;
     String createdBy;
     String updatedBy;
     OffsetDateTime createdAt;

@@ -24,8 +24,9 @@ public class TransactionResponse {
     Double amount;
     String description;
     UserResponse user;
-    @Schema(description = "Số dư sau giao dịch của user")
+    @Schema(description = "Vốn đầu tư khả dụng của user sau giao dịch")
     private long remainDepositBalance;
+    @Schema(description = "Doanh thu đầu tư còn lại của user sau giao dịch")
     private long remainAvailableBalance;
     String createdBy;
     String updatedBy;

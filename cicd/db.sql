@@ -8,6 +8,12 @@ create table hibernate_sequences
 create sequence users_id_seq
     as integer;
 
+create sequence leader_package_id_seq
+    as integer;
+
+create sequence invest_package_id_seq
+    as integer;
+
 create table users
 (
     id                bigint default nextval('users_id_seq'::regclass) not null
@@ -33,42 +39,47 @@ create table users
 
 create table invest_package
 (
-    id          serial
+    id           bigint default nextval('invest_package_id_seq'::regclass) not null
         primary key,
-    created_at  timestamp(6) with time zone,
-    created_by  varchar(255),
-    updated_at  timestamp(6) with time zone,
-    updated_by  varchar(255),
-    amt         bigint not null,
-    description varchar(5000),
-    duration    integer,
-    image       varchar(255),
-    invest_type smallint
+    created_at   timestamp(6) with time zone,
+    created_by   varchar(255),
+    updated_at   timestamp(6) with time zone,
+    updated_by   varchar(255),
+    amt          bigint                                                    not null,
+    description  varchar(5000),
+    duration     integer,
+    image        varchar(255),
+    invest_type  smallint
         constraint invest_package_invest_type_check
             check ((invest_type >= 0) AND (invest_type <= 4)),
-    is_active   boolean,
-    rate        double precision,
-    title       varchar(256)
+    is_active    boolean,
+    rate         double precision,
+    title        varchar(256),
+    remain_buy   bigint,
+    user_can_buy bigint
 );
+
 
 create table leader_package
 (
-    id          serial
+    id           bigint default nextval('leader_package_id_seq'::regclass) not null
         primary key,
-    created_at  timestamp(6) with time zone,
-    created_by  varchar(255),
-    updated_at  timestamp(6) with time zone,
-    updated_by  varchar(255),
-    amt         bigint,
-    description varchar(5000),
-    duration    integer,
-    image       varchar(255),
-    invest_type smallint
+    created_at   timestamp(6) with time zone,
+    created_by   varchar(255),
+    updated_at   timestamp(6) with time zone,
+    updated_by   varchar(255),
+    amt          bigint,
+    description  varchar(5000),
+    duration     integer,
+    image        varchar(255),
+    invest_type  smallint
         constraint leader_package_invest_type_check
             check ((invest_type >= 0) AND (invest_type <= 4)),
-    is_active   boolean,
-    rate        double precision,
-    title       varchar(256)
+    is_active    boolean,
+    rate         double precision,
+    title        varchar(256),
+    remain_buy   bigint,
+    user_can_buy bigint
 );
 
 create table invest_his
@@ -169,6 +180,7 @@ create table user_bank
             references users
 );
 
+
 create table user_leader
 (
     id            bigserial
@@ -188,13 +200,14 @@ create table user_leader
         constraint user_leader_status_check
             check ((status >= 0) AND (status <= 1)),
     withdraw_date timestamp(6) with time zone,
-    package_id    integer
+    package_id    bigint
         constraint fkqlygkx2hfddmc9t821pfla53v
             references leader_package,
     user_id       bigint
         constraint fksoy95mi0u9ep3pqfit1m10ceu
             references users
 );
+
 
 create table user_package
 (
@@ -215,11 +228,10 @@ create table user_package
         constraint user_package_status_check
             check ((status >= 0) AND (status <= 1)),
     withdraw_date timestamp(6) with time zone,
-    package_id    integer
+    package_id    bigint
         constraint fk8hpqt7scsojf6d1dsl0620l3l
             references invest_package,
     user_id       bigint
         constraint fk23wrg2jabxivswndr07og5q0y
             references users
 );
-

@@ -23,4 +23,8 @@ public interface UserPackageRepository extends JpaRepository<UserPackage, Long>,
     List<UserPackage> findAllByPhone(String phone);
 
     Optional<UserPackage> findByIdAndStatus(Long id, UserPackageStatus status);
+
+    @Query("FROM UserPackage u where u.user.id=:userId and u.investPackage.id=:packageId")
+    List<UserPackage> findAllByUserAndLeader(Long userId, Long packageId);
+
 }

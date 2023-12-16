@@ -79,6 +79,19 @@ public class PackageService {
         if (user.getDepositBalance() - entity.getAmt() < 0) {
             throw new BusinessException(4015, "Account Balance not enough!", 400);
         }
+        if(entity.getRemainBuy() != null && entity.getRemainBuy() <= 0){
+            throw new BusinessException(4017, "The number of packages has run out!", 400);
+        }
+        if(entity.getUserCanBuy() != null){
+            var buy = userPackageRepository.findAllByUserAndLeader(user.getId(), entity.getId());
+            if(buy.size() >= entity.getUserCanBuy()){
+                throw new BusinessException(4018, "Package limited!", 400);
+            }
+        }
+        if(entity.getRemainBuy() != null){
+            entity.setRemainBuy(entity.getRemainBuy() - 1);
+            investPackageRepository.saveAndFlush(entity);
+        }
         user.setDepositBalance(user.getDepositBalance() - entity.getAmt());
         user = userRepository.save(user);
 
@@ -103,6 +116,19 @@ public class PackageService {
         var entity = entityOptional.get();
         if (user.getDepositBalance() - entity.getAmt() < 0) {
             throw new BusinessException(4015, "Account Balance not enough!", 400);
+        }
+        if(entity.getRemainBuy() != null && entity.getRemainBuy() <= 0){
+            throw new BusinessException(4017, "The number of packages has run out!", 400);
+        }
+        if(entity.getUserCanBuy() != null){
+            var buy = userLeaderRepository.findAllByUserAndLeader(user.getId(), entity.getId());
+            if(buy.size() >= entity.getUserCanBuy()){
+                throw new BusinessException(4018, "Package limited!", 400);
+            }
+        }
+        if(entity.getRemainBuy() != null){
+            entity.setRemainBuy(entity.getRemainBuy() - 1);
+            leaderPackageRepository.saveAndFlush(entity);
         }
         user.setDepositBalance(user.getDepositBalance() - entity.getAmt());
         user = userRepository.save(user);

@@ -15,6 +15,10 @@ public interface LeaderPackageRepository extends JpaRepository<LeaderPackage, Lo
     @AutoAppendAuditInfo
     <S extends LeaderPackage> S save(S entity);
 
+    @Override
+    @AutoAppendAuditInfo
+    <S extends LeaderPackage> S saveAndFlush(S entity);
+
     Optional<LeaderPackage> findByIdAndIsActiveTrue(Long id);
 
     List<LeaderPackage> findAllByIsActiveTrue();

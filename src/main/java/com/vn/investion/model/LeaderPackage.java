@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class LeaderPackage extends AuditEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
     private Integer duration;
     private Long amt;
     private InvestType investType;
@@ -26,4 +26,6 @@ public class LeaderPackage extends AuditEntity {
     private String description;
     private Boolean isActive;
     private String image;
+    private Long remainBuy;
+    private Long userCanBuy;
 }

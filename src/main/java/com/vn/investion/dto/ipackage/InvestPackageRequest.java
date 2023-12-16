@@ -29,4 +29,8 @@ public class InvestPackageRequest {
     Double rate;
     @Schema(example = "image.png", description = "tên file ảnh")
     String image;
+    @Schema(example = "9999", description = "Giới hạn số lượng lượt mua của gói")
+    Long remainBuy;
+    @Schema(example = "10", description = "Giới hạn số lần mua gói của user")
+    Long userCanBuy;
 }

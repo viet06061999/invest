@@ -16,6 +16,10 @@ public interface InvestPackageRepository extends JpaRepository<InvestPackage, Lo
     @AutoAppendAuditInfo
     <S extends InvestPackage> S save(S entity);
 
+    @Override
+    @AutoAppendAuditInfo
+    <S extends InvestPackage> S saveAndFlush(S entity);
+
     Optional<InvestPackage> findByIdAndIsActiveTrue(Long id);
 
     List<InvestPackage> findAllByIsActiveTrue();

@@ -23,5 +23,8 @@ public interface UserLeaderRepository extends JpaRepository<UserLeader, Long>, J
     @Query("FROM UserLeader u where u.user.id=:userId and u.status=:status")
     List<UserLeader> findAllByUserStatus(Long userId, UserPackageStatus status);
 
+    @Query("FROM UserLeader u where u.user.id=:userId and u.leaderPackage.id=:leaderId")
+    List<UserLeader> findAllByUserAndLeader(Long userId, Long leaderId);
+
     Optional<UserLeader> findByIdAndStatus(Long id, UserPackageStatus status);
 }
