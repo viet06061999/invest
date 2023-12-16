@@ -154,7 +154,7 @@ public class UserService {
     }
 
     public TeamResponse getLeaderTeam(String phone) {
-        var user = getUserByPhone(phone);
+        var user = getLeaderByPhone(phone);
         if (user == null) {
             throw new BusinessException(4018, "Leader package not exists!", 404);
         }
