@@ -6,22 +6,19 @@ import com.vn.investion.mapper.Entity2UserBankResponse;
 import com.vn.investion.mapper.Entity2UserResponse;
 import com.vn.investion.mapper.UserBankRequest2Entity;
 import com.vn.investion.mapper.UserRequest2Entity;
+import com.vn.investion.model.PayslipHis;
 import com.vn.investion.model.User;
 import com.vn.investion.model.UserBank;
-import com.vn.investion.model.define.Role;
-import com.vn.investion.model.define.TransactionType;
-import com.vn.investion.model.define.UserPackageStatus;
-import com.vn.investion.model.define.UserStatus;
-import com.vn.investion.repo.TransactionHisRepository;
-import com.vn.investion.repo.UserBankRepository;
-import com.vn.investion.repo.UserLeaderRepository;
-import com.vn.investion.repo.UserRepository;
+import com.vn.investion.model.UserNotification;
+import com.vn.investion.model.define.*;
+import com.vn.investion.repo.*;
 import com.vn.investion.utils.Commission;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -37,6 +34,8 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserLeaderRepository userLeaderRepository;
     private final TransactionHisRepository transactionHisRepository;
+    private final PayslipHisRepository payslipHisRepository;
+    private final NotificationRepository notificationRepository;
 
     @Transactional
     public UserBankResponse createUserBank(UserBankRequest request, String phone) {
@@ -193,6 +192,58 @@ public class UserService {
         var giftLevel = Commission.getGiftLevel(totalDeposit, totalMember, totalF1);
         var userRes = Entity2UserResponse.INSTANCE.map(user);
         return new TeamResponse(userRes, userHierarchy, totalMember, totalF1, totalDeposit, giftLevel);
+    }
+
+    @Transactional
+    public Boolean paid(){
+        var userLeaders = userRepository.findAllLeader();
+        for(User u: userLeaders){
+            var now = OffsetDateTime.now();
+            var paidHis = payslipHisRepository.getPayslipHisMonth(u.getId(), now.getYear(), now.getMonthValue());
+            if(paidHis.isPresent()){
+                continue;
+            }
+            var userHierarchy = getUserUserHierarchy(u.getPhone());
+            var totalF1 = userHierarchy.get(1).size();
+            var totalMember = 1;
+            var userList = new ArrayList<Long>();
+            for (Map.Entry<Integer, List<UserResponse>> entry : userHierarchy.entrySet()) {
+                totalMember += entry.getValue().size();
+                userList.addAll(entry.getValue().stream().map(UserResponse::getId).toList());
+            }
+            userList.add(u.getId());
+            var totalDeposit = transactionHisRepository.getTotalAmountByUserIdsAndMonth(
+                    userList,
+                    now.getYear(),
+                    now.getMonthValue(),
+                    TransactionType.DEPOSIT.ordinal()
+            );
+            var giftLevel = Commission.getGiftLevel(totalDeposit, totalMember, totalF1);
+            var level = Commission.getLevel(totalDeposit, totalMember, totalF1);
+            var payslipHis = new PayslipHis(null,
+                    giftLevel.getGift(),
+                    u,
+                    totalMember,
+                    totalF1,
+                    giftLevel.getTotal(),
+                    level,
+                    giftLevel.getProgress());
+            payslipHis =  payslipHisRepository.save(payslipHis);
+            u.setAvailableBalance(u.getAvailableBalance() + giftLevel.getGift());
+            userRepository.save(u);
+            DecimalFormat decimalFormat = new DecimalFormat("#,### ₫");
+            String formattedAmount = decimalFormat.format(payslipHis.getAmount());
+            var notification = new UserNotification(null,
+                    "Lương tháng %d/%d".formatted(now.getMonthValue(), now.getYear()),
+                    "Xin chúc mừng! Bạn đã được thanh toán %s cho tiền lương tháng %d/%d".formatted(formattedAmount, now.getMonthValue(), now.getYear()),
+                    payslipHis.getId().toString(),
+                    NotificationType.USER_REFERENCE,
+                    NotificationStatus.UNREAD,
+                    userRepository.findById(u.getId()).get()
+            );
+            notificationRepository.save(notification);
+        }
+        return true;
     }
 
     private UserBank getUserBankById(Long id) {

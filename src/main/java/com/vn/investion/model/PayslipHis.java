@@ -6,35 +6,22 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Table(name = "invest_his")
+@Table(name = "payslip_his")
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class InvestHis extends AuditEntity {
+public class PayslipHis extends AuditEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
     private Long amount;
-
-    private Long interestAmount;
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-
-    @ManyToOne
-    @JoinColumn(name = "leader_id")
-    private LeaderPackage leaderPackage;
-
-    @ManyToOne
-    @JoinColumn(name = "package_id")
-    private InvestPackage investPackage;
-
-    @ManyToOne
-    @JoinColumn(name = "ref_id")
-    private User refUser;
-
-    private Long remainAvailableBalance;
+    private Integer totalMember;
+    private Integer totalF1;
+    private Long totalDeposit;
+    private Integer level;
+    private double progress;
 }

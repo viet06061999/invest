@@ -39,8 +39,8 @@ public class User extends AuditEntity implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
     private Boolean isLockPoint;
-    private long depositBalance = 0;
-    private long availableBalance = 0;
+    private Long depositBalance = 0L;
+    private Long availableBalance = 0L;
     private String identification;
     private UserStatus status;
 

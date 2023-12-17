@@ -34,7 +34,7 @@ public class UserPackage extends AuditEntity {
     @JoinColumn(name = "package_id")
     InvestPackage investPackage;
 
-    public long getCurrentInterest(){
+    public Long getCurrentInterest(){
         OffsetDateTime now = OffsetDateTime.now();
         OffsetDateTime minDateTime = withdrawDate.isBefore(now) ? withdrawDate : now;
         OffsetDateTime minIntDateTime = interestDate.isBefore(minDateTime) ? interestDate : minDateTime;
@@ -42,7 +42,7 @@ public class UserPackage extends AuditEntity {
         return (long)(amt*rate*durationCount);
     }
 
-    public long getInvestDuration(){
+    public Long getInvestDuration(){
         return DateTimeUtils.getCountInterest(investType, getCreatedAt(), OffsetDateTime.now());
     }
 }

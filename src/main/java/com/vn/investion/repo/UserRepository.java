@@ -53,4 +53,7 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
             " FROM UserHierarchy h " +
             "         JOIN users u ON h.code = u.code;", nativeQuery = true)
     List<Object[]> findParentHierarchy(String code, int level);
+
+    @Query(value = "SELECT u.* FROM users u inner join user_leader ul on u.id = ul.user_id", nativeQuery = true)
+    List<User> findAllLeader();
 }

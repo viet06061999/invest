@@ -21,7 +21,7 @@ public class UserLeader extends AuditEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     Integer duration;
-    long amt;
+    Long amt;
     InvestType investType;
     Double rate;
     OffsetDateTime interestDate;
@@ -34,11 +34,11 @@ public class UserLeader extends AuditEntity {
     @JoinColumn(name = "package_id")
     LeaderPackage leaderPackage;
 
-    public long getCurrentInterest(){
+    public Long getCurrentInterest(){
         OffsetDateTime now = OffsetDateTime.now();
         OffsetDateTime minDateTime = withdrawDate.isBefore(now) ? withdrawDate : now;
         var durationCount = DateTimeUtils.getCountInterest(investType, interestDate, minDateTime);
-        return (long)(amt*rate*durationCount);
+        return (long) (amt*rate*durationCount);
     }
 
     public long getInvestDuration(){

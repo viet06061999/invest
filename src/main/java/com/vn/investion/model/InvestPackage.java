@@ -17,7 +17,7 @@ public class InvestPackage extends AuditEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Integer duration;
-    private long amt;
+    private Long amt;
     private InvestType investType;
     private Double rate;
     @Column(length = 256)

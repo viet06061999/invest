@@ -238,3 +238,45 @@ create table user_package
         constraint fk23wrg2jabxivswndr07og5q0y
             references users
 );
+
+
+create table payslip_his
+(
+    id            serial
+        primary key,
+    created_at    timestamp(6) with time zone,
+    created_by    varchar(255),
+    updated_at    timestamp(6) with time zone,
+    updated_by    varchar(255),
+    amount        bigint,
+    level         integer,
+    progress      double precision not null,
+    total_deposit bigint,
+    totalf1       integer,
+    total_member  integer,
+    user_id       bigint
+        constraint fkiskbqhpg35bp48k3slf60tgfu
+            references users
+);
+
+create table user_noti
+(
+    id          bigserial
+        primary key,
+    created_at  timestamp(6) with time zone,
+    created_by  varchar(255),
+    updated_at  timestamp(6) with time zone,
+    updated_by  varchar(255),
+    description varchar(255),
+    object      varchar(255),
+    status      smallint
+        constraint user_noti_status_check
+            check ((status >= 0) AND (status <= 1)),
+    title       varchar(255),
+    type        smallint
+        constraint user_noti_type_check
+            check ((type >= 0) AND (type <= 3)),
+    user_id     bigint
+        constraint fk3rs8sinpoolfx1rnexik1lm35
+            references users
+);

@@ -2,8 +2,10 @@ package com.vn.investion.controller;
 
 import com.vn.investion.dto.Response;
 import com.vn.investion.dto.auth.*;
+import com.vn.investion.mapper.Entity2PayslipResponse;
 import com.vn.investion.mapper.Entity2UserResponse;
 import com.vn.investion.model.define.UserStatus;
+import com.vn.investion.repo.PayslipHisRepository;
 import com.vn.investion.repo.UserRepository;
 import com.vn.investion.service.UserService;
 import com.vn.investion.utils.JwtService;
@@ -25,6 +27,7 @@ import java.util.Map;
 public class UserController {
     private final UserService service;
     private final UserRepository repository;
+    private final PayslipHisRepository payslipRepo;
 
     @GetMapping("/user/banks")
     @Operation(description = "Lấy tất cả tài khoản ngân hàng của user hiện tại")
@@ -45,6 +48,19 @@ public class UserController {
     @GetMapping("/current-user")
     public Response<UserResponse> getCurrentUser(Authentication authentication) {
         return Response.ofSucceeded(Entity2UserResponse.INSTANCE.map(service.getUserByPhone(JwtService.getUserName(authentication))));
+    }
+
+    @GetMapping("/user/payslip")
+    public Response<List<PayslipHisResponse>> getPayslipUser(Authentication authentication) {
+        return Response.ofSucceeded(payslipRepo.getPayslipUser(JwtService.getUserName(authentication))
+                .stream()
+                .map(Entity2PayslipResponse.INSTANCE::map).toList());
+    }
+
+    @PutMapping("/payslip/paid")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Response<Boolean> paid() {
+        return Response.ofSucceeded(service.paid());
     }
 
     @GetMapping("/admin/banks")

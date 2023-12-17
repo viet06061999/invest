@@ -27,14 +27,14 @@ public class TransactionHis extends AuditEntity {
     private String accountName;
     @Column(length = 128)
     private String bank;
-    private long amount;
+    private Long amount;
     @Column(length = 1024)
     private String description;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-    private long remainDepositBalance;
-    private long remainAvailableBalance;
+    private Long remainDepositBalance;
+    private Long remainAvailableBalance;
     public TransactionHis copy() {
         TransactionHis copy = new TransactionHis();
         copy.setId(this.id);
