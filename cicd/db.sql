@@ -31,10 +31,13 @@ create table users
     created_by        varchar(255),
     updated_at        timestamp(6) with time zone,
     updated_by        varchar(255),
-    is_active         boolean,
     is_lock_point     boolean,
     available_balance bigint,
-    deposit_balance   bigint
+    deposit_balance   bigint,
+    identification    varchar(255),
+    status            smallint
+        constraint users_status_check
+            check ((status >= 0) AND (status <= 3))
 );
 
 create table invest_package

@@ -1,18 +1,17 @@
 package com.vn.investion.service;
 
-import com.vn.investion.dto.auth.TeamResponse;
-import com.vn.investion.dto.auth.UserBankRequest;
-import com.vn.investion.dto.auth.UserBankResponse;
-import com.vn.investion.dto.auth.UserResponse;
+import com.vn.investion.dto.auth.*;
 import com.vn.investion.exception.BusinessException;
 import com.vn.investion.mapper.Entity2UserBankResponse;
 import com.vn.investion.mapper.Entity2UserResponse;
 import com.vn.investion.mapper.UserBankRequest2Entity;
+import com.vn.investion.mapper.UserRequest2Entity;
 import com.vn.investion.model.User;
 import com.vn.investion.model.UserBank;
 import com.vn.investion.model.define.Role;
 import com.vn.investion.model.define.TransactionType;
 import com.vn.investion.model.define.UserPackageStatus;
+import com.vn.investion.model.define.UserStatus;
 import com.vn.investion.repo.TransactionHisRepository;
 import com.vn.investion.repo.UserBankRepository;
 import com.vn.investion.repo.UserLeaderRepository;
@@ -57,6 +56,13 @@ public class UserService {
     }
 
     @Transactional
+    public UserResponse updateUser(UpdateUserRequest request, String phone) {
+        var user = getUserByPhone(phone);
+        UserRequest2Entity.INSTANCE.mapTo(request, user);
+        return Entity2UserResponse.INSTANCE.map(userRepository.save(user));
+    }
+
+    @Transactional
     public Boolean delete(Long userBankId, String phone) {
         var userBank = getUserBankById(userBankId);
         assert userBank.getUser().getPhone().equals(phone);
@@ -90,10 +96,11 @@ public class UserService {
                     (String) row[9],
                     row[10].equals(Role.USER.name()) ? Role.USER : Role.ADMIN,
                     (Boolean) row[15],
-                    (Boolean) row[16],
+                    (long) row[16],
                     (long) row[17],
-                    (long) row[18]
-            );
+                    (String) row[18],
+                    UserStatus.values()[(short) row[19]]
+                    );
             try {
                 ZoneOffset systemZoneOffset = ZoneOffset.systemDefault().getRules().getOffset(java.time.Instant.now());
                 userLv.setCreatedAt(((Instant) row[11]).atOffset(systemZoneOffset));
@@ -127,9 +134,10 @@ public class UserService {
                     (String) row[9],
                     row[10].equals(Role.USER.name()) ? Role.USER : Role.ADMIN,
                     (Boolean) row[15],
-                    (Boolean) row[16],
+                    (long) row[16],
                     (long) row[17],
-                    (long) row[18]
+                    (String) row[18],
+                    UserStatus.values()[(short) row[19]]
             );
             try {
                 ZoneOffset systemZoneOffset = ZoneOffset.systemDefault().getRules().getOffset(java.time.Instant.now());
@@ -162,7 +170,7 @@ public class UserService {
         var totalF1 = userHierarchy.get(1).size();
         var totalMember = 1;
         var userList = new ArrayList<Long>();
-        for (Map.Entry<Integer, List<UserResponse>> entry: userHierarchy.entrySet()){
+        for (Map.Entry<Integer, List<UserResponse>> entry : userHierarchy.entrySet()) {
             totalMember += entry.getValue().size();
             userList.addAll(entry.getValue().stream().map(UserResponse::getId).toList());
         }
@@ -173,7 +181,7 @@ public class UserService {
                 now.getYear(),
                 now.getMonthValue(),
                 TransactionType.DEPOSIT.ordinal()
-                );
+        );
         var giftLevel = Commission.getGiftLevel(totalDeposit, totalMember, totalF1);
         var userRes = Entity2UserResponse.INSTANCE.map(user);
         return new TeamResponse(userRes, userHierarchy, totalMember, totalF1, totalDeposit, giftLevel);

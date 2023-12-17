@@ -7,6 +7,7 @@ import com.vn.investion.exception.BusinessException;
 import com.vn.investion.mapper.Entity2AcountResponse;
 import com.vn.investion.model.User;
 import com.vn.investion.model.define.Role;
+import com.vn.investion.model.define.UserStatus;
 import com.vn.investion.repo.UserRepository;
 import com.vn.investion.utils.JwtService;
 import com.vn.investion.utils.ReferralCodeGenerator;
@@ -36,7 +37,7 @@ public record AuthenticationService(UserRepository userRepository,
                 .depositBalance(0)
                 .passwd(passwordEncoder.encode(request.getPassword()))
                 .role(Role.USER)
-                .isActive(true)
+                .status(UserStatus.PENDING)
                 .isLockPoint(Boolean.FALSE)
                 .build();
 

@@ -1,6 +1,7 @@
 package com.vn.investion.dto.auth;
 
 import com.vn.investion.model.define.Role;
+import com.vn.investion.model.define.UserStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,6 +25,8 @@ public class UserResponse  {
     private Double depositBalance;
     @Schema(description = "Doanh thu đầu tư của user")
     private Double availableBalance;
+    private UserStatus status;
+    private String identification;
     Role role;
     String createdBy;
     String updatedBy;

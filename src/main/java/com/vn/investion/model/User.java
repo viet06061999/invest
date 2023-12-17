@@ -2,6 +2,7 @@ package com.vn.investion.model;
 
 import com.vn.investion.model.define.AuditEntity;
 import com.vn.investion.model.define.Role;
+import com.vn.investion.model.define.UserStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -37,10 +38,11 @@ public class User extends AuditEntity implements UserDetails {
     private String refId;
     @Enumerated(EnumType.STRING)
     private Role role;
-    private Boolean isActive;
     private Boolean isLockPoint;
     private long depositBalance = 0;
     private long availableBalance = 0;
+    private String identification;
+    private UserStatus status;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -1,15 +1,17 @@
 package com.vn.investion.controller;
 
 import com.vn.investion.dto.Response;
-import com.vn.investion.dto.auth.TeamResponse;
-import com.vn.investion.dto.auth.UserBankRequest;
-import com.vn.investion.dto.auth.UserBankResponse;
-import com.vn.investion.dto.auth.UserResponse;
+import com.vn.investion.dto.auth.*;
+import com.vn.investion.mapper.Entity2UserResponse;
+import com.vn.investion.model.define.UserStatus;
+import com.vn.investion.repo.UserRepository;
 import com.vn.investion.service.UserService;
 import com.vn.investion.utils.JwtService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,11 +24,27 @@ import java.util.Map;
 @SecurityRequirement(name = "Bearer Authentication")
 public class UserController {
     private final UserService service;
+    private final UserRepository repository;
 
     @GetMapping("/user/banks")
     @Operation(description = "Lấy tất cả tài khoản ngân hàng của user hiện tại")
     public Response<List<UserBankResponse>> getUserBank(Authentication authentication) {
         return Response.ofSucceeded(service.getBankOfUser(JwtService.getUserName(authentication)));
+    }
+
+    @PutMapping("/user")
+    public Response<UserResponse> update(Authentication authentication, @Valid @RequestBody UpdateUserRequest request) {
+        return Response.ofSucceeded(service.updateUser(request, JwtService.getUserName(authentication)));
+    }
+
+    @GetMapping("/users")
+    public Response<List<UserResponse>> getAllUser() {
+        return Response.ofSucceeded(repository.findAll().stream().map(Entity2UserResponse.INSTANCE::map).toList());
+    }
+
+    @GetMapping("/current-user")
+    public Response<UserResponse> getCurrentUser(Authentication authentication) {
+        return Response.ofSucceeded(Entity2UserResponse.INSTANCE.map(service.getUserByPhone(JwtService.getUserName(authentication))));
     }
 
     @GetMapping("/admin/banks")
@@ -69,5 +87,14 @@ public class UserController {
     @Operation(description = "Lấy thông tin đội nhóm của user")
     public Response<TeamResponse> getTeamInfo(Authentication authentication) {
         return Response.ofSucceeded(service.getLeaderTeam(JwtService.getUserName(authentication)));
+    }
+
+    @PutMapping("/user/update-status")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(description = "Lấy thông tin đội nhóm của user")
+    public Response<UserResponse> updateStatusUser(Authentication authentication, @RequestBody UserUpdateStatusRequest request) {
+        var user = service.getUserByPhone(JwtService.getUserName(authentication));
+        user.setStatus(Enum.valueOf(UserStatus.class, request.getStatus()));
+        return Response.ofSucceeded(Entity2UserResponse.INSTANCE.map(repository.save(user)));
     }
 }

@@ -22,4 +22,6 @@ public class RegisterRequest {
     @NotBlank(message = "Reference id is mandatory")
     @Schema(description = "Mã mời là code của user khác")
     String refId;
+    @Schema(description = "Ảnh căn cước")
+    String identification;
 }
