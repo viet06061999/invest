@@ -92,7 +92,7 @@ public class UserController {
     @PutMapping("/user/{userId}/update-status")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(description = "Lấy thông tin đội nhóm của user")
-    public Response<UserResponse> updateStatusUser(@RequestBody UserUpdateStatusRequest request, @PathVariable Integer userId) {
+    public Response<UserResponse> updateStatusUser(@RequestBody UserUpdateStatusRequest request, @PathVariable Long userId) {
         var user = service.getUserById(userId);
         user.setStatus(Enum.valueOf(UserStatus.class, request.getStatus()));
         return Response.ofSucceeded(Entity2UserResponse.INSTANCE.map(repository.save(user)));

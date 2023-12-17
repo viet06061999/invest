@@ -4,10 +4,9 @@ import com.vn.investion.dto.auth.UserResponse;
 import com.vn.investion.dto.ipackage.*;
 import com.vn.investion.exception.BusinessException;
 import com.vn.investion.mapper.*;
-import com.vn.investion.model.InvestHis;
-import com.vn.investion.model.InvestPackage;
-import com.vn.investion.model.LeaderPackage;
-import com.vn.investion.model.User;
+import com.vn.investion.model.*;
+import com.vn.investion.model.define.NotificationStatus;
+import com.vn.investion.model.define.NotificationType;
 import com.vn.investion.model.define.UserPackageStatus;
 import com.vn.investion.repo.*;
 import com.vn.investion.utils.Commission;
@@ -31,19 +30,48 @@ public class PackageService {
     private final MultiLevelRateRepository multiLevelRateRepository;
     private final InterestHisRepository interestHisRepo;
     private final UserService userService;
+    private final NotificationRepository notificationRepository;
 
     @Transactional
     public InvestPackageResponse createInvestPackage(InvestPackageRequest request) {
         var entity = InvestRequest2Entity.INSTANCE.map(request);
         entity.setIsActive(true);
-        return Entity2InvestResponse.INSTANCE.map(investPackageRepository.save(entity));
+        entity = investPackageRepository.save(entity);
+        try {
+            var notification = new UserNotification(null,
+                    "Gói đầu tư mới",
+                    "Bạn có 1 gói đầu tư mới rất hấp dẫn. Hãy xem ngay gói %s.".formatted(entity.getTitle()),
+                    entity.getId().toString(),
+                    NotificationType.INVEST,
+                    NotificationStatus.UNREAD,
+                    null
+            );
+            notificationRepository.save(notification);
+        } catch (Exception e) {
+
+        }
+        return Entity2InvestResponse.INSTANCE.map(entity);
     }
 
     @Transactional
     public LeaderPackageResponse createLeaderPackage(LeaderPackageRequest request) {
         var entity = LeaderRequest2Entity.INSTANCE.map(request);
         entity.setIsActive(true);
-        return Entity2LeaderResponse.INSTANCE.map(leaderPackageRepository.save(entity));
+        entity = leaderPackageRepository.save(entity);
+        try {
+            var notification = new UserNotification(null,
+                    "Gói leader mới",
+                    "Bạn có 1 gói leader mới rất hấp dẫn. Hãy xem ngay gói %s.".formatted(entity.getTitle()),
+                    entity.getId().toString(),
+                    NotificationType.LEADER,
+                    NotificationStatus.UNREAD,
+                    null
+            );
+            notificationRepository.save(notification);
+        } catch (Exception e) {
+
+        }
+        return Entity2LeaderResponse.INSTANCE.map(entity);
     }
 
     @Transactional
@@ -79,16 +107,16 @@ public class PackageService {
         if (user.getDepositBalance() - entity.getAmt() < 0) {
             throw new BusinessException(4015, "Account Balance not enough!", 400);
         }
-        if(entity.getRemainBuy() != null && entity.getRemainBuy() <= 0){
+        if (entity.getRemainBuy() != null && entity.getRemainBuy() <= 0) {
             throw new BusinessException(4017, "The number of packages has run out!", 400);
         }
-        if(entity.getUserCanBuy() != null){
+        if (entity.getUserCanBuy() != null) {
             var buy = userPackageRepository.findAllByUserAndLeader(user.getId(), entity.getId());
-            if(buy.size() >= entity.getUserCanBuy()){
+            if (buy.size() >= entity.getUserCanBuy()) {
                 throw new BusinessException(4018, "Package limited!", 400);
             }
         }
-        if(entity.getRemainBuy() != null){
+        if (entity.getRemainBuy() != null) {
             entity.setRemainBuy(entity.getRemainBuy() - 1);
             investPackageRepository.saveAndFlush(entity);
         }
@@ -117,16 +145,16 @@ public class PackageService {
         if (user.getDepositBalance() - entity.getAmt() < 0) {
             throw new BusinessException(4015, "Account Balance not enough!", 400);
         }
-        if(entity.getRemainBuy() != null && entity.getRemainBuy() <= 0){
+        if (entity.getRemainBuy() != null && entity.getRemainBuy() <= 0) {
             throw new BusinessException(4017, "The number of packages has run out!", 400);
         }
-        if(entity.getUserCanBuy() != null){
+        if (entity.getUserCanBuy() != null) {
             var buy = userLeaderRepository.findAllByUserAndLeader(user.getId(), entity.getId());
-            if(buy.size() >= entity.getUserCanBuy()){
+            if (buy.size() >= entity.getUserCanBuy()) {
                 throw new BusinessException(4018, "Package limited!", 400);
             }
         }
-        if(entity.getRemainBuy() != null){
+        if (entity.getRemainBuy() != null) {
             entity.setRemainBuy(entity.getRemainBuy() - 1);
             leaderPackageRepository.saveAndFlush(entity);
         }
@@ -239,7 +267,7 @@ public class PackageService {
         var user = entity.getUser();
         user.setAvailableBalance(user.getAvailableBalance() + interest);
         userRepository.save(user);
-        updateF(interest, 0,null, entity.getInvestPackage(), user);
+        updateF(interest, 0, null, entity.getInvestPackage(), user);
         createInterestHis(null, entity.getInvestPackage(), user, 0, interest, null);
         var res = Entity2UserPackageResponse.INSTANCE.map(userPackageRepository.findById(userPackageId).get());
         res.setInterestWithdraw(interest);
@@ -312,7 +340,7 @@ public class PackageService {
         userPackageRepository.save(entity);
         user.setAvailableBalance(user.getAvailableBalance() + total);
         userRepository.save(user);
-        updateF(interest, 0,null, entity.getInvestPackage(), user);
+        updateF(interest, 0, null, entity.getInvestPackage(), user);
         createInterestHis(null, entity.getInvestPackage(), user, entity.getAmt(), interest, null);
         var res = Entity2UserPackageResponse.INSTANCE.map(userPackageRepository.findById(userInvestId).get());
         res.setInterestWithdraw(interest);

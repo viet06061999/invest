@@ -12,7 +12,7 @@ import java.time.OffsetDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserResponse  {
+public class UserResponse {
     private Long id;
     private String firstname;
     private String lastname;

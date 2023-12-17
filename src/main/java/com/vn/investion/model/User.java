@@ -79,4 +79,8 @@ public class User extends AuditEntity implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    public String getFullName() {
+        return firstname + " " + lastname;
+    }
 }

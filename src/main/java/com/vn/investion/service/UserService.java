@@ -161,7 +161,7 @@ public class UserService {
         return userOptional.get();
     }
 
-    public User getUserById(Integer id) {
+    public User getUserById(Long id) {
         var userOptional = userRepository.findById(id);
         if (userOptional.isEmpty()) {
             throw new BusinessException(4004, "Reference Account not exists!", 404);

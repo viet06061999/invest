@@ -6,8 +6,12 @@ import com.vn.investion.dto.auth.RegisterRequest;
 import com.vn.investion.exception.BusinessException;
 import com.vn.investion.mapper.Entity2UserResponse;
 import com.vn.investion.model.User;
+import com.vn.investion.model.UserNotification;
+import com.vn.investion.model.define.NotificationStatus;
+import com.vn.investion.model.define.NotificationType;
 import com.vn.investion.model.define.Role;
 import com.vn.investion.model.define.UserStatus;
+import com.vn.investion.repo.NotificationRepository;
 import com.vn.investion.repo.UserRepository;
 import com.vn.investion.utils.JwtService;
 import com.vn.investion.utils.ReferralCodeGenerator;
@@ -20,7 +24,9 @@ import org.springframework.stereotype.Service;
 @Service
 public record AuthenticationService(UserRepository userRepository,
                                     PasswordEncoder passwordEncoder,
-                                    AuthenticationManager authenticationManager) {
+                                    AuthenticationManager authenticationManager,
+                                    NotificationRepository notificationRepository,
+                                    UserService userService) {
     public AuthenticationResponse register(RegisterRequest request) {
         var refUser = userRepository.findByCode(request.getRefId());
         if (refUser.isEmpty()) {
@@ -44,6 +50,23 @@ public record AuthenticationService(UserRepository userRepository,
         try {
             var userResult = userRepository.save(user);
             final var token = JwtService.generateToken(user);
+            try {
+                var listHierarchy = userService.getParentHierarchy(userResult.getPhone());
+                listHierarchy.entrySet().forEach(entry -> {
+                    var notification = new UserNotification(null,
+                            "Bạn có một F%d mới đăng ký".formatted(entry.getKey()),
+                            "Xin chúc mừng! %s là F%d mới của bạn.".formatted(userResult.getFullName(), entry.getKey()),
+                            userResult.getId().toString(),
+                            NotificationType.USER_REFERENCE,
+                            NotificationStatus.UNREAD,
+                            userRepository.findById(entry.getValue().getId()).get()
+                    );
+                    notificationRepository.save(notification);
+                });
+            } catch (Exception e) {
+
+            }
+
             return new AuthenticationResponse(token, Entity2UserResponse.INSTANCE.map(userResult));
         } catch (DataIntegrityViolationException e) {
             throw new BusinessException(4011, "Account was exists!", 500);
