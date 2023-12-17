@@ -237,9 +237,9 @@ public class UserService {
                     "Lương tháng %d/%d".formatted(now.getMonthValue(), now.getYear()),
                     "Xin chúc mừng! Bạn đã được thanh toán %s cho tiền lương tháng %d/%d".formatted(formattedAmount, now.getMonthValue(), now.getYear()),
                     payslipHis.getId().toString(),
-                    NotificationType.USER_REFERENCE,
+                    NotificationType.PAYSLIP,
                     NotificationStatus.UNREAD,
-                    userRepository.findById(u.getId()).get()
+                    u
             );
             notificationRepository.save(notification);
         }
