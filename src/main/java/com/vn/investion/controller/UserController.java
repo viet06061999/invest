@@ -89,11 +89,11 @@ public class UserController {
         return Response.ofSucceeded(service.getLeaderTeam(JwtService.getUserName(authentication)));
     }
 
-    @PutMapping("/user/update-status")
+    @PutMapping("/user/{userId}/update-status")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(description = "Lấy thông tin đội nhóm của user")
-    public Response<UserResponse> updateStatusUser(Authentication authentication, @RequestBody UserUpdateStatusRequest request) {
-        var user = service.getUserByPhone(JwtService.getUserName(authentication));
+    public Response<UserResponse> updateStatusUser(@RequestBody UserUpdateStatusRequest request, @PathVariable Integer userId) {
+        var user = service.getUserById(userId);
         user.setStatus(Enum.valueOf(UserStatus.class, request.getStatus()));
         return Response.ofSucceeded(Entity2UserResponse.INSTANCE.map(repository.save(user)));
     }

@@ -161,6 +161,14 @@ public class UserService {
         return userOptional.get();
     }
 
+    public User getUserById(Integer id) {
+        var userOptional = userRepository.findById(id);
+        if (userOptional.isEmpty()) {
+            throw new BusinessException(4004, "Reference Account not exists!", 404);
+        }
+        return userOptional.get();
+    }
+
     public TeamResponse getLeaderTeam(String phone) {
         var user = getLeaderByPhone(phone);
         if (user == null) {

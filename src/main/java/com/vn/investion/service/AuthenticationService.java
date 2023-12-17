@@ -4,7 +4,7 @@ import com.vn.investion.dto.auth.AuthenticationRequest;
 import com.vn.investion.dto.auth.AuthenticationResponse;
 import com.vn.investion.dto.auth.RegisterRequest;
 import com.vn.investion.exception.BusinessException;
-import com.vn.investion.mapper.Entity2AcountResponse;
+import com.vn.investion.mapper.Entity2UserResponse;
 import com.vn.investion.model.User;
 import com.vn.investion.model.define.Role;
 import com.vn.investion.model.define.UserStatus;
@@ -44,7 +44,7 @@ public record AuthenticationService(UserRepository userRepository,
         try {
             var userResult = userRepository.save(user);
             final var token = JwtService.generateToken(user);
-            return new AuthenticationResponse(token, Entity2AcountResponse.INSTANCE.map(userResult));
+            return new AuthenticationResponse(token, Entity2UserResponse.INSTANCE.map(userResult));
         } catch (DataIntegrityViolationException e) {
             throw new BusinessException(4011, "Account was exists!", 500);
         }
@@ -60,7 +60,7 @@ public record AuthenticationService(UserRepository userRepository,
             );
             final var user = userRepository.findByPhone(request.phone()).orElseThrow();
             final var token = JwtService.generateToken(user);
-            return new AuthenticationResponse(token, Entity2AcountResponse.INSTANCE.map(user));
+            return new AuthenticationResponse(token, Entity2UserResponse.INSTANCE.map(user));
         } catch (Exception e) {
             throw new BusinessException(4012, "Login fail!", 500);
         }
