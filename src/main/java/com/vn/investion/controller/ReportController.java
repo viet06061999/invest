@@ -3,9 +3,11 @@ package com.vn.investion.controller;
 import com.vn.investion.dto.Response;
 import com.vn.investion.dto.auth.ReportRequest;
 import com.vn.investion.dto.auth.ReportResponse;
+import com.vn.investion.dto.auth.UserUpdateStatusRequest;
 import com.vn.investion.exception.BusinessException;
 import com.vn.investion.mapper.Entity2ReportResponse;
 import com.vn.investion.mapper.ReportRequest2Entity;
+import com.vn.investion.model.define.ReportStatus;
 import com.vn.investion.repo.ReportRepository;
 import com.vn.investion.service.UserService;
 import com.vn.investion.utils.JwtService;
@@ -53,6 +55,18 @@ public class ReportController {
         var entity = entityOptional.get();
         ReportRequest2Entity.INSTANCE.mapTo(request, entity);
         return Response.ofSucceeded(Entity2ReportResponse.INSTANCE.map(repository.save(entity)));
+    }
+
+    @PutMapping("/report/{reportId}/update-status")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(description = "Lấy thông tin đội nhóm của user")
+    public Response<ReportResponse> updateStatusUser(@RequestBody UserUpdateStatusRequest request, @PathVariable Long reportId) {
+        var entityOptional = repository.findById(reportId);
+        if(entityOptional.isEmpty()){
+            throw new BusinessException(4004, "Not found", 404);
+        }
+        entityOptional.get().setStatus(Enum.valueOf(ReportStatus.class, request.getStatus()));
+        return Response.ofSucceeded(Entity2ReportResponse.INSTANCE.map(repository.save(entityOptional.get())));
     }
 
     @DeleteMapping("/report/{reportId}")

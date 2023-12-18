@@ -94,8 +94,8 @@ create table invest_his
     updated_at               timestamp(6) with time zone,
     updated_by               varchar(255),
     amount                   bigint not null,
-    interest_amount          bigint not null,
-    remain_available_balance bigint not null,
+    interest_amount          bigint,
+    remain_available_balance bigint,
     package_id               integer
         constraint fk4xxtplglhbr2r6m4l6ipfmgs4
             references invest_package,
@@ -154,8 +154,8 @@ create table transaction_his
     bank                     varchar(128),
     description              varchar(1024),
     number_account           varchar(20),
-    remain_available_balance bigint not null,
-    remain_deposit_balance   bigint not null,
+    remain_available_balance bigint ,
+    remain_deposit_balance   bigint ,
     status                   smallint
         constraint transaction_his_status_check
             check ((status >= 0) AND (status <= 2)),
@@ -250,7 +250,7 @@ create table payslip_his
     updated_by    varchar(255),
     amount        bigint,
     level         integer,
-    progress      double precision not null,
+    progress      double precision,
     total_deposit bigint,
     totalf1       integer,
     total_member  integer,
