@@ -4,9 +4,8 @@ import com.vn.investion.dto.Response;
 import com.vn.investion.exception.BusinessException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -51,23 +50,56 @@ public class ImageController {
     }
 
     @GetMapping("/image/download/{filename}")
-    public ResponseEntity<Resource> downloadImage(@PathVariable("filename") String filename) {
+    public ResponseEntity<byte[]> downloadImage(@PathVariable("filename") String filename) {
         try {
             // Đường dẫn tới thư mục lưu trữ ảnh
-            Path file = Paths.get(uploadDir).resolve(filename).normalize();
-            Resource resource = new UrlResource(file.toUri());
-            if (resource.exists()) {
-                HttpHeaders headers = new HttpHeaders();
-                headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
+//            Path file = Paths.get(uploadDir).resolve(filename).normalize();
+//            Resource resource = new UrlResource(file.toUri());
+//            if (resource.exists()) {
+//                HttpHeaders headers = new HttpHeaders();
+//                headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
+//
+//                return ResponseEntity.ok()
+//                        .headers(headers)
+//                        .body(resource);
+//            } else {
+//                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+//            }
+            // Đọc file ảnh từ thư mục hoặc cơ sở dữ liệu
+            // Ví dụ:
+            Path imagePath = Paths.get(uploadDir).resolve(filename).normalize();
+            byte[] imageBytes = Files.readAllBytes(imagePath);
+            String fileExtension = FilenameUtils.getExtension(filename);
 
-                return ResponseEntity.ok()
-                        .headers(headers)
-                        .body(resource);
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-            }
+            MediaType mediaType = getMediaTypeForImage(fileExtension);
+
+            // Tạo header response cho loại ảnh
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(mediaType);
+
+
+
+            // Trả về phản hồi HTTP 200 và dữ liệu ảnh
+            return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
         } catch (MalformedURLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private MediaType getMediaTypeForImage(String fileExtension) {
+        switch (fileExtension.toLowerCase()) {
+            case "jpeg":
+            case "jpg":
+                return MediaType.IMAGE_JPEG;
+            case "png":
+                return MediaType.IMAGE_PNG;
+            case "gif":
+                return MediaType.IMAGE_GIF;
+            // Các loại ảnh khác nếu cần
+            default:
+                return MediaType.APPLICATION_OCTET_STREAM;
         }
     }
 }
