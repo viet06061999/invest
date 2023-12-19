@@ -21,7 +21,7 @@ public class TransactionResponse {
     String numberAccount;
     String accountName;
     String bank;
-    Double amount;
+    Long amount;
     String description;
     UserResponse user;
     @Schema(description = "Vốn đầu tư khả dụng của user sau giao dịch")

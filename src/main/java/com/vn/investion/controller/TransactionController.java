@@ -67,6 +67,13 @@ public class TransactionController {
         return Response.ofSucceeded(transactionService.getAll());
     }
 
+//    @GetMapping("/transactions")
+//    @PreAuthorize("hasRole('ADMIN')")
+//    @Operation(description = "Lấy tất cả giao dịch chuyển tiền rút tiền")
+//    public Response<List<TransactionResponse>> getAll() {
+//        return Response.ofSucceeded(transactionService.getAll(TransactionFilters.toSpecificationAccount(null), pageable));
+//    }
+
     @GetMapping("/user/transactions")
     @Operation(description = "Lấy transaction của user hiện tại")
     public Response<List<TransactionResponse>> getByUser(Authentication authentication) {

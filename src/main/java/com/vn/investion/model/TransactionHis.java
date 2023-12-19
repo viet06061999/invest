@@ -33,8 +33,9 @@ public class TransactionHis extends AuditEntity {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-    private Long remainDepositBalance;
-    private Long remainAvailableBalance;
+    private Long remainDepositBalance = 0L;
+    private Long remainAvailableBalance = 0L;
+
     public TransactionHis copy() {
         TransactionHis copy = new TransactionHis();
         copy.setId(this.id);
@@ -50,6 +51,7 @@ public class TransactionHis extends AuditEntity {
         copy.setRemainAvailableBalance(this.remainAvailableBalance);
         return copy;
     }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -68,7 +70,7 @@ public class TransactionHis extends AuditEntity {
                 Objects.equals(amount, other.amount) &&
                 Objects.equals(description, other.description) &&
                 Objects.equals(user, other.user) &&
-                Objects.equals(remainDepositBalance, other.remainDepositBalance)&&
+                Objects.equals(remainDepositBalance, other.remainDepositBalance) &&
                 Objects.equals(remainAvailableBalance, other.remainAvailableBalance);
     }
 

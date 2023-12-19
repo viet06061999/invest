@@ -16,6 +16,7 @@ import com.vn.investion.repo.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -130,7 +131,8 @@ public class TransactionService {
     }
 
     public List<TransactionResponse> getAll() {
-        var entityList = transactionHisRepository.findAll();
+        var sort = Sort.by("status");
+        var entityList = transactionHisRepository.findAll(sort);
         return entityList.stream().map(Entity2TransactionResponse.INSTANCE::map).toList();
     }
 
