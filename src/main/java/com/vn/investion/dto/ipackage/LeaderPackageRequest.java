@@ -27,6 +27,8 @@ public class LeaderPackageRequest {
     @PositiveOrZero
     @Schema(example = "0.1", description = "Lãi suất đầu tư tính theo đơn vị investType, ví dụ này là 10% 1 ngày")
     Double rate;
+    @Schema(example = "image.png", description = "tên file ảnh")
+    String image;
     @Schema(example = "9999", description = "Giới hạn số lượng lượt mua của gói")
     private Long remainBuy;
     @Schema(example = "10", description = "Giới hạn số lần mua gói của user")

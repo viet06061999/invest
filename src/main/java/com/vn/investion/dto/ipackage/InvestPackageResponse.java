@@ -17,6 +17,7 @@ public class InvestPackageResponse {
     Double rate;
     String title;
     String description;
+    String image;
     Long remainBuy;
     Long userCanBuy;
     String createdBy;
