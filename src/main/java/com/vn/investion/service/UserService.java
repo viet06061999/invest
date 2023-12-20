@@ -219,6 +219,9 @@ public class UserService {
                     TransactionType.DEPOSIT.ordinal()
             );
             var giftLevel = Commission.getGiftLevel(totalDeposit, totalMember, totalF1);
+            if(giftLevel == null){
+                continue;
+            }
             var level = Commission.getLevel(totalDeposit, totalMember, totalF1);
             var payslipHis = new PayslipHis(null,
                     giftLevel.getGift(),
