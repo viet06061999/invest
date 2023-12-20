@@ -35,6 +35,8 @@ public class ImageController {
         try {
             // Lưu trữ tệp tin ảnh
             String fileName = file.getOriginalFilename();
+            String fileExtension = FilenameUtils.getExtension(fileName);
+            fileName = System.currentTimeMillis() + "." + fileExtension;
             Path dirPath = Paths.get(uploadDir);
             if (!Files.exists(dirPath)) {
                 Files.createDirectories(dirPath);
@@ -43,7 +45,7 @@ public class ImageController {
             fileOutputStream.write(file.getBytes());
             fileOutputStream.close();
 
-            return Response.ofSucceeded(fileName);
+            return Response.ofSucceeded("/api/v1/image/download/" + fileName);
         } catch (IOException e) {
             throw new BusinessException(5000, e.getMessage(), 500);
         }
@@ -76,8 +78,6 @@ public class ImageController {
             // Tạo header response cho loại ảnh
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(mediaType);
-
-
 
             // Trả về phản hồi HTTP 200 và dữ liệu ảnh
             return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
