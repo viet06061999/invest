@@ -1,5 +1,6 @@
 package com.vn.investion;
 
+import com.vn.investion.dto.auth.UserResponse;
 import com.vn.investion.model.User;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,11 +14,10 @@ import java.util.Optional;
 public class DemoController {
 
     @GetMapping
-    public String sayHello(Authentication authentication) {
-         return """
-                Hello %s 🥳 !
-                Welcome to a very secured page  😱
-                """;
+    public UserResponse sayHello(Authentication authentication) {
+         var res = new UserResponse();
+         res.setFirstname("nguyen");
+         return res;
     }
 
     private String getName(Authentication authentication) {
@@ -27,5 +27,4 @@ public class DemoController {
                 .map(User::getPhone)
                 .orElseGet(authentication::getName);
     }
-
 }
