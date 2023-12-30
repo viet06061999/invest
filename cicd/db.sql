@@ -300,3 +300,7 @@ create table payslip_his
             references users
 );
 
+alter table if exists invest_package add column contract varchar(255);
+alter table if exists invest_package add column detail varchar(255);
+alter table if exists leader_package add column contract varchar(255);
+alter table if exists leader_package add column detail varchar(255);

@@ -18,6 +18,8 @@ public class InvestPackageResponse {
     String title;
     String description;
     String image;
+    String contract;
+    String detail;
     Long remainBuy;
     Long userCanBuy;
     String createdBy;

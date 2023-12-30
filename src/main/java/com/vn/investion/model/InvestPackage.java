@@ -26,6 +26,8 @@ public class InvestPackage extends AuditEntity {
     private String description;
     private Boolean isActive;
     private String image;
+    private String contract;
+    private String detail;
     private Long remainBuy;
     private Long userCanBuy;
 }

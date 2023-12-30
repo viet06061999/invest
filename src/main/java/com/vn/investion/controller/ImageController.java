@@ -97,6 +97,8 @@ public class ImageController {
                 return MediaType.IMAGE_PNG;
             case "gif":
                 return MediaType.IMAGE_GIF;
+            case "pdf":
+                return MediaType.APPLICATION_PDF;
             // Các loại ảnh khác nếu cần
             default:
                 return MediaType.APPLICATION_OCTET_STREAM;
