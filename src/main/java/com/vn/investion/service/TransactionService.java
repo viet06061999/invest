@@ -52,11 +52,11 @@ public class TransactionService {
         }
         var transaction = TransactionRequest2Entity.INSTANCE.map(request);
         transaction.setUser(user);
-        var entity = Entity2TransactionResponse.INSTANCE.map(transactionHisRepository.save(transaction));
         if (request.getTransactionType().equals(TransactionType.WITHDRAW)) {
             user.setAvailableBalance(user.getAvailableBalance() - request.getAmount());
         }
         user = userRepository.save(user);
+        var entity = Entity2TransactionResponse.INSTANCE.map(transactionHisRepository.save(transaction));
         transaction.setRemainAvailableBalance(user.getAvailableBalance());
         transaction.setRemainDepositBalance(user.getDepositBalance());
         var userName = user.getFirstname() + " " + user.getLastname() + " (" + user.getPhone() + ")";
