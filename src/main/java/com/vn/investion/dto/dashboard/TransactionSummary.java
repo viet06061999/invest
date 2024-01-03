@@ -10,5 +10,5 @@ public class TransactionSummary {
     @Schema(description = "Tổng số tiền nạp")
     BigDecimal totalDeposit;
     @Schema(description = "Tổng số tiền rút")
-    BigDecimal totalCredit;
+    BigDecimal totalWithdraw;
 }
