@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -56,4 +57,13 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
 
     @Query(value = "SELECT u.* FROM users u inner join user_leader ul on u.id = ul.user_id", nativeQuery = true)
     List<User> findAllLeader();
+
+    @Query(value = "SELECT " +
+            "    COUNT(*) AS totalUsers, " +
+            "    SUM(CASE WHEN status = 0 THEN 1 ELSE 0 END) AS countPending, " +
+            "    SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END) AS countVerified, " +
+            "    SUM(CASE WHEN status = 2 THEN 1 ELSE 0 END) AS countUnverified, " +
+            "    SUM(CASE WHEN status = 3 THEN 1 ELSE 0 END) AS countInactive " +
+            "FROM users", nativeQuery = true)
+    Map<String, Long> getDashboardUser();
 }

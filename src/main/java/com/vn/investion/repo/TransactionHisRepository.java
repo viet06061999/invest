@@ -9,7 +9,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -35,4 +37,10 @@ public interface TransactionHisRepository extends JpaRepository<TransactionHis, 
             @Param("month") int month,
             int transactionType
     );
+
+    @Query(value = " SELECT" +
+            "    SUM(CASE WHEN transaction_type = 0 THEN amount ELSE 0 END) AS totalDeposit," +
+            "    SUM(CASE WHEN transaction_type = 1 THEN amount ELSE 0 END) AS totalCredit" +
+            "    FROM transaction_his", nativeQuery = true)
+    Map<String, BigDecimal> getDashboardTransaction();
 }
