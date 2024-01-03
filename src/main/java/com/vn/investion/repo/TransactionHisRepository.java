@@ -40,7 +40,7 @@ public interface TransactionHisRepository extends JpaRepository<TransactionHis, 
 
     @Query(value = " SELECT" +
             "    SUM(CASE WHEN transaction_type = 0 THEN amount ELSE 0 END) AS totalDeposit," +
-            "    SUM(CASE WHEN transaction_type = 1 THEN amount ELSE 0 END) AS totalCredit" +
+            "    SUM(CASE WHEN transaction_type = 1 THEN amount ELSE 0 END) AS totalWithdraw" +
             "    FROM transaction_his", nativeQuery = true)
     Map<String, BigDecimal> getDashboardTransaction();
 }
